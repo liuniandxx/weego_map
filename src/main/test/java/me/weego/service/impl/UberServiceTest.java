@@ -19,6 +19,6 @@ public class UberServiceTest {
 
     @Test
     public void testGetEstimatePrice() {
-
+        System.out.println(uberService.getEstimatePrice("48.866202,2.310822", "48.857092,2.352226"));
     }
 }
