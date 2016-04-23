@@ -1,7 +1,5 @@
 package me.weego.service.impl;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
@@ -28,7 +26,7 @@ public class SpiderServiceImpl  implements SpiderService {
     private BaseService baseService;
 
     public String translate(String text) {
-        String key=baseService.getKey("4");
+        String key= baseService.getKey("4");
         key=key.replaceAll("\\&","");
         String baiduUrl = "http://openapi.baidu.com/public/2.0/bmt/translate?client_id="+key+"&q="+text+"&from=auto&to=zh";
         OkHttpClient okHttpClient = new OkHttpClient();
