@@ -6,12 +6,14 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 import me.weego.constant.SpiderKeyEnum;
+import me.weego.service.BaseService;
 import me.weego.service.SpiderService;
 import me.weego.util.LoggerUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -20,10 +22,13 @@ import static com.google.common.base.Preconditions.checkArgument;
  * @author tcl
  */
 @Service
-public class SpiderServiceImpl extends BaseServiceImpl implements SpiderService {
+public class SpiderServiceImpl  implements SpiderService {
+
+    @Resource
+    private BaseService baseService;
 
     public String translate(String text) {
-        String key=getKey("4");
+        String key=baseService.getKey("4");
         key=key.replaceAll("\\&","");
         String baiduUrl = "http://openapi.baidu.com/public/2.0/bmt/translate?client_id="+key+"&q="+text+"&from=auto&to=zh";
         OkHttpClient okHttpClient = new OkHttpClient();
@@ -136,7 +141,7 @@ public class SpiderServiceImpl extends BaseServiceImpl implements SpiderService 
         // var departure_time = Math.round(new Date().getTime()/1000);
      //   googleUrl += "&departure_time=" + 1415878654;//departure_time;
         googleUrl += "&sensor=false";
-        googleUrl += "&key=" + getKey(SpiderKeyEnum.GOOGLE_ONLINE.getType());
+        googleUrl += "&key=" + baseService.getKey(SpiderKeyEnum.GOOGLE_ONLINE.getType());
         googleUrl += "&language=zh-CN";
         System.out.println(googleUrl);
 

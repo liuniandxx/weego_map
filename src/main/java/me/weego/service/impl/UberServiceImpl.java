@@ -1,11 +1,14 @@
 package me.weego.service.impl;
 
 import me.weego.service.UberService;
+import org.springframework.stereotype.Service;
 
 /**
  * Created by  on 16-4-23.
  */
-public class UberServiceImpl extends BaseServiceImpl implements UberService {
+
+@Service
+public class UberServiceImpl implements UberService {
 
     
     @Override

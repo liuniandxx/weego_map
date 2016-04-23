@@ -1,6 +1,7 @@
 package me.weego.controller;
 
 import me.weego.pojo.ResBody;
+import me.weego.service.BaseService;
 import me.weego.service.SpiderService;
 import me.weego.util.LoggerUtil;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -27,10 +28,13 @@ public class SpiderController extends BaseController {
     @Resource
     SpiderService spiderService;
 
+    @Resource
+    BaseService baseService;
+
     @RequestMapping(value = "key", method = RequestMethod.GET)
     public ResBody getKey(@RequestParam String type) {
         checkArgument(StringUtils.isNotBlank(type), "param should with type");
-        return ResBody.returnSuccess(spiderService.getKey(type));
+        return ResBody.returnSuccess(baseService.getKey(type));
     }
 
     @RequestMapping(value = "google/traffic", method = RequestMethod.GET)
