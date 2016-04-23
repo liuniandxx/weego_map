@@ -9,8 +9,7 @@ public class UberServiceImpl extends BaseServiceImpl implements UberService {
 
     
     @Override
-    public String getEstimatePrice(String startLat, String startLon,
-                                   String endLat, String endLon, int seatCount) {
+    public String getEstimatePrice(String start, String end, int seatCount) {
         return null;
     }
 }
