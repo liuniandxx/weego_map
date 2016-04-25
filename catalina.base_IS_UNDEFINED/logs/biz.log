@@ -1,0 +1,5 @@
+2016-04-23 11:46:05.163 [main] INFO  biz - request uber url https://api.uber.com.cn/v1/estimates/price?start_latitude=2.310822&start_longitude=48.866202&end_latitude=2.352226&end_longitude=48.857092&seat_count=2&server_token=rmdI19Qamcpjdkt0bywr4_cDaAM2euiFaJBbSJaf
+2016-04-23 11:48:19.755 [main] INFO  biz - request uber url https://api.uber.com.cn/v1/estimates/price?start_latitude=2.310822&start_longitude=48.866202&end_latitude=2.352226&end_longitude=48.857092&seat_count=2&server_token=uber.token.server=vez9viTmk7y0E-z8GATsFLQPTQ_pbU1KMAL-X5Mx
+2016-04-23 11:48:20.671 [main] INFO  biz - uber_estimates_price result 
+2016-04-23 11:49:00.038 [main] INFO  biz - request uber url https://api.uber.com.cn/v1/estimates/price?start_latitude=2.310822&start_longitude=48.866202&end_latitude=2.352226&end_longitude=48.857092&seat_count=2&server_token=vez9viTmk7y0E-z8GATsFLQPTQ_pbU1KMAL-X5Mx
+2016-04-23 11:49:00.950 [main] INFO  biz - uber_estimates_price result {"prices":[]}
