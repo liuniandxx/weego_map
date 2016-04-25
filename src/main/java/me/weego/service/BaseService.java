@@ -5,4 +5,6 @@ package me.weego.service;
  */
 public interface BaseService {
     String getKey(String type);
+
+    String getHttpRequest(String url);
 }

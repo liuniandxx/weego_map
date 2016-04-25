@@ -29,21 +29,21 @@ public class SpiderServiceImpl  implements SpiderService {
         String key= baseService.getKey("4");
         key=key.replaceAll("\\&","");
         String baiduUrl = "http://openapi.baidu.com/public/2.0/bmt/translate?client_id="+key+"&q="+text+"&from=auto&to=zh";
-        OkHttpClient okHttpClient = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url(baiduUrl)
-                .build();
-
-        String result = "";
-        try {
-            Response response = okHttpClient.newCall(request).execute();
-            if (response.isSuccessful()){
-                result = response.body().string();
-            }
-        } catch (IOException e) {
-            LoggerUtil.logError("google http error", e);
-        }
-        return result;
+//        OkHttpClient okHttpClient = new OkHttpClient();
+//        Request request = new Request.Builder()
+//                .url(baiduUrl)
+//                .build();
+//
+//        String result = "";
+//        try {
+//            Response response = okHttpClient.newCall(request).execute();
+//            if (response.isSuccessful()){
+//                result = response.body().string();
+//            }
+//        } catch (IOException e) {
+//            LoggerUtil.logError("google http error", e);
+//        }
+        return baseService.getHttpRequest(baiduUrl);
     }
 
 
@@ -54,21 +54,21 @@ public class SpiderServiceImpl  implements SpiderService {
         checkArgument(StringUtils.isNotBlank(dest)
                 && dest.contains(","), "error param destination");
         String googleUrl = getGoogleTrafficUrl(mode, origin, dest);
-        OkHttpClient okHttpClient = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url(googleUrl)
-                .build();
-
-        String result = "";
-        try {
-            Response response = okHttpClient.newCall(request).execute();
-            if (response.isSuccessful()){
-                result = response.body().string();
-            }
-        } catch (IOException e) {
-            LoggerUtil.logError("google http error", e);
-        }
-        return result;
+//        OkHttpClient okHttpClient = new OkHttpClient();
+//        Request request = new Request.Builder()
+//                .url(googleUrl)
+//                .build();
+//
+//        String result = "";
+//        try {
+//            Response response = okHttpClient.newCall(request).execute();
+//            if (response.isSuccessful()){
+//                result = response.body().string();
+//            }
+//        } catch (IOException e) {
+//            LoggerUtil.logError("google http error", e);
+//        }
+        return baseService.getHttpRequest(googleUrl);
     }
 
 

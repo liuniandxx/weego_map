@@ -9,6 +9,7 @@ import java.util.Map;
 public enum SpiderKeyEnum {
     GOOGLE_ONLINE("1", "google.key.online"),
     GOOGLE_OFFLINE("2", "google.key.offline"),
+    GOOGLE_PLACE("6", "google.key.placestation"),
     BAIDU_KEY("4","baidu.key"),
     TRIP_ADVISOR("3", "tripadvisor.key"),
     UBER_SERVERTOKEN("5", "uber.token.server");
