@@ -5,12 +5,14 @@ import org.bson.types.ObjectId;
 
 /**
  * @author ln
- * 购物
+ * 景点
  */
-public class ShoppingModel {
+public class AttractionModel {
     private ObjectId id;
 
-    private String name;
+    private String attractions;
+
+    private String attractionsEn;
 
     private String latitude;
 
@@ -30,14 +32,21 @@ public class ShoppingModel {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getAttractions() {
+        return attractions;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setAttractions(String attractions) {
+        this.attractions = attractions;
     }
 
+    public String getAttractionsEn() {
+        return attractionsEn;
+    }
+
+    public void setAttractionsEn(String attractionsEn) {
+        this.attractionsEn = attractionsEn;
+    }
 
     public String getLatitude() {
         return latitude;
@@ -82,13 +91,17 @@ public class ShoppingModel {
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                    .append("id", id)
-                    .append("name", name)
-                    .append("latitude", latitude)
-                    .append("longitude", longitude)
-                    .append("address", address)
-                    .append("type", type)
-                    .append("placeId", placeId)
-                    .toString();
+                .append("id", id)
+                .append("attractions", attractions)
+                .append("attractionsEn", attractionsEn)
+                .append("latitude", latitude)
+                .append("longitude", longitude)
+                .append("address", address)
+                .append("type", type)
+                .append("pla", placeId)
+                .toString();
     }
 }
+
+
+

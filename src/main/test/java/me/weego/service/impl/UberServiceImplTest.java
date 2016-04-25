@@ -13,12 +13,12 @@ import javax.annotation.Resource;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:applicationContext.xml")
-public class UberServiceTest {
+public class UberServiceImplTest {
     @Resource
     private UberService uberService;
 
     @Test
     public void testGetEstimatePrice() {
-        System.out.println(uberService.getEstimatePrice("48.866202,2.310822", "48.857092,2.352226"));
+        System.out.println(uberService.getEstimatePrice("116.3640600000,39.9960970000", "116.3650490000,39.9672990000"));
     }
 }

@@ -20,4 +20,9 @@ public class RestaurantServiceImpl implements RestaurantService {
     public List<RestaurantModel> query() {
         return restaurantDao.query();
     }
+
+    @Override
+    public List<RestaurantModel> queryByName(String name) {
+        return restaurantDao.queryByName(name);
+    }
 }

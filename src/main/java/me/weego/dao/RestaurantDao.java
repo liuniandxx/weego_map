@@ -1,16 +1,21 @@
 package me.weego.dao;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.mongodb.BasicDBObject;
 import com.mongodb.Block;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.util.JSON;
 import me.weego.model.RestaurantModel;
 import org.bson.Document;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.print.Doc;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * @author tcl
@@ -32,6 +37,29 @@ public class RestaurantDao {
         RestaurantModel restaurantModel = new RestaurantModel();
         restaurantModel.setName(iterable.first().getString("city_name"));
         list.add(restaurantModel);
+        return list;
+    }
+
+
+    public List<RestaurantModel> queryByName(String name) {
+        Pattern pattern = Pattern.compile("^.*" + name + ".*$", Pattern.CASE_INSENSITIVE);
+        BasicDBObject query = new BasicDBObject();
+        query.put("name", pattern);
+        BasicDBObject sort = new BasicDBObject();
+        sort.put("name", 1);
+        final List<RestaurantModel> list = Lists.newArrayList();
+        FindIterable<Document> iterable = collection.find(query).sort(sort);
+        for (Document elem : iterable) {
+            RestaurantModel restaurantModel = new RestaurantModel();
+            restaurantModel.setId(elem.getObjectId("_id"));
+            restaurantModel.setName(elem.getString("name"));
+            restaurantModel.setAddress(Strings.nullToEmpty(elem.getString("address")));
+            restaurantModel.setLatitude(Strings.nullToEmpty(elem.getString("latitude")));
+            restaurantModel.setLongitude(Strings.nullToEmpty(elem.getString("longitude")));
+            restaurantModel.setType(Strings.nullToEmpty(elem.getString("type")));
+            restaurantModel.setPlaceId(Strings.nullToEmpty(elem.getString("place_id")));
+            list.add(restaurantModel);
+        }
         return list;
     }
 }
