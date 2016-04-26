@@ -98,7 +98,7 @@ public class AttractionModel {
                 .append("longitude", longitude)
                 .append("address", address)
                 .append("type", type)
-                .append("pla", placeId)
+                .append("placeId", placeId)
                 .toString();
     }
 }

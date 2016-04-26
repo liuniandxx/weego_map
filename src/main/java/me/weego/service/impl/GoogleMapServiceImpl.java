@@ -6,12 +6,13 @@ import me.weego.service.GoogleMapService;
 import me.weego.util.LoggerUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import javax.annotation.Resource;
 
 import static com.google.common.base.Preconditions.checkArgument;
 /**
- * Created by liuniandxx on 16-4-23.
+ * @author ln
  */
 @Service
 public class GoogleMapServiceImpl implements GoogleMapService {
@@ -29,12 +30,33 @@ public class GoogleMapServiceImpl implements GoogleMapService {
     }
 
     @Override
-    public String getPlaceDetails(String placeId) {
+    public JSONObject getPlaceDetails(String placeId) {
         LoggerUtil.logBiz("***** Google place details search start *****", null);
         checkArgument(StringUtils.isNotBlank(placeId), "param placeId should not blank");
         String detailsUrl = getDetailsUrl(placeId);
         LoggerUtil.logBiz("***** detailsUrl", detailsUrl);
-        return baseService.getHttpRequest(detailsUrl);
+        return JSONObject.parseObject(baseService.getHttpRequest(detailsUrl));
+    }
+
+    @Override
+    public JSONObject getPlaceDetails(String location, String address) {
+        LoggerUtil.logBiz("get place details by location and address", null);
+        String nearBys = getNearBy(location, address);
+        JSONObject nearByJson = JSONObject.parseObject(nearBys);
+        JSONArray results = nearByJson.getJSONArray("results");
+        if(results != null && results.size() > 0) {
+            JSONObject firstPlace = results.getJSONObject(0);
+            String placeId = firstPlace.getString("place_id");
+            JSONObject placeDetails = getPlaceDetails(placeId);
+            placeDetails.put("isGoogle", true);
+            placeDetails.put("address", address);
+            return placeDetails;
+        } else {
+            JSONObject placeDetails = new JSONObject();
+            placeDetails.put("isGoogle", false);
+            placeDetails.put("address", address);
+            return placeDetails;
+        }
     }
 
     @Override

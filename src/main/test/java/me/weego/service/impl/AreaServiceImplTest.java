@@ -1,7 +1,7 @@
 package me.weego.service.impl;
 
-import me.weego.model.RestaurantModel;
-import me.weego.service.RestaurantService;
+import me.weego.model.AreaModel;
+import me.weego.service.AreaService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -11,22 +11,19 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
- * Created by liuniandxx on 16-4-25.
+ * @author ln
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:applicationContext.xml")
-public class RestaurantModelTest {
-
+public class AreaServiceImplTest {
     @Resource
-    private RestaurantService restaurantService;
+    private AreaService areaService;
 
     @Test
     public void testQueryByName() {
-        String name = "Cinnamon";
-        List<RestaurantModel> list = restaurantService.queryByName(name);
-
-        for(RestaurantModel elem : list) {
-            System.out.println(elem.toString());
+        List<AreaModel> list = areaService.queryByName("官也街");
+        for(AreaModel areaModel : list) {
+            System.out.println(areaModel);
         }
     }
 }

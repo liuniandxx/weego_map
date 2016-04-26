@@ -28,7 +28,7 @@ public class ShoppingDao {
         this.collection = mongo.getCollection("shoppings");
     }
 
-    public List<ShoppingModel> querybyName(String name) {
+    public List<ShoppingModel> queryByName(String name) {
         Pattern pattern = Pattern.compile("^.*" + name + ".*$", Pattern.CASE_INSENSITIVE);
         BasicDBObject query = new BasicDBObject();
         query.put("name", pattern);
