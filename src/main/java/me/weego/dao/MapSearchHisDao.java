@@ -3,6 +3,7 @@ package me.weego.dao;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.result.DeleteResult;
@@ -80,8 +81,8 @@ public class MapSearchHisDao {
         FindIterable<Document> iterable = collection.find(query);
         for(Document elem : iterable) {
             res = true;
-            elem.put("last_modify_time", new Date());
-            collection.updateMany(query, elem);
+//            elem.put("last_modify_time", new Date());
+            collection.updateOne(query, new Document("$set", new Document("last_modify_time", new Date())));
         }
         return res;
     }
@@ -97,8 +98,8 @@ public class MapSearchHisDao {
         FindIterable<Document> iterable = collection.find(query);
         for(Document elem : iterable) {
             res = true;
-            elem.put("last_modify_time", new Date());
-            collection.updateMany(query, elem);
+//            elem.put("last_modify_time", new Date());
+            collection.updateOne(query, new Document("$set", new Document("last_modify_time", new Date())));
         }
         return res;
     }

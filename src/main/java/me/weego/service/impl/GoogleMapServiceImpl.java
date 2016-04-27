@@ -88,13 +88,16 @@ public class GoogleMapServiceImpl implements GoogleMapService {
     }
 
     @Override
-    public List<PlacePredictModel> getPlacePredict(String name, String location) {
+    public List<PlacePredictModel> getPlacePredict(String name, String location, String cityId) {
         LoggerUtil.logBiz("**** Google place predict start ****", null);
+        LoggerUtil.logBiz("param name", name);
+        LoggerUtil.logBiz("param location", location);
         checkArgument(StringUtils.isNotBlank(name), "param name should not be blank");
         LoggerUtil.logBiz("获取匹配的景点地标", null);
         List<PlacePredictModel> list = Lists.newArrayList();
-        List<AttractionModel> attractionModels = attractionService.queryByName(name);
+        List<AttractionModel> attractionModels = attractionService.queryByName(name, cityId);
         for(AttractionModel model : attractionModels) {
+            LoggerUtil.logBiz("Attraction model", model.toString());
             PlacePredictModel placePredictModel = new PlacePredictModel();
             placePredictModel.setIsPoi(true);
             placePredictModel.setPoiId(model.getId().toString());
@@ -103,56 +106,60 @@ public class GoogleMapServiceImpl implements GoogleMapService {
             placePredictModel.setAddress(model.getAddress());
             placePredictModel.setImage(model.getCoverImage());
             placePredictModel.setTag(model.getTag());
-
-            String dest = model.getLongitude() + "," + model.getLatitude();
+            String dest = model.getLatitude() + "," + model.getLongitude();
             placePredictModel.setDistance(DistanceUtil.formatDistance(location, dest));
             placePredictModel.setPlaceId(model.getPlaceId());
             list.add(placePredictModel);
         }
 
         LoggerUtil.logBiz("获取匹配的餐厅", null);
-        List<RestaurantModel> restaurantModels = restaurantService.queryByName(name);
+        List<RestaurantModel> restaurantModels = restaurantService.queryByName(name, cityId);
         for(RestaurantModel model : restaurantModels) {
+            LoggerUtil.logBiz("Restaurant model", model.toString());
             PlacePredictModel placePredictModel = new PlacePredictModel();
             placePredictModel.setIsPoi(true);
             placePredictModel.setPoiId(model.getId().toString());
             placePredictModel.setType(model.getType());
             placePredictModel.setName(model.getName());
+            placePredictModel.setAddress(model.getAddress());
             placePredictModel.setImage(model.getCoverImage());
             placePredictModel.setTag(model.getTag());
-            String dest = model.getLongitude() + "," + model.getLatitude();
+            String dest = model.getLatitude() + "," + model.getLongitude();
             placePredictModel.setDistance(DistanceUtil.formatDistance(location, dest));
             placePredictModel.setPlaceId(model.getPlaceId());
             list.add(placePredictModel);
         }
 
         LoggerUtil.logBiz("获取匹配的购物", null);
-        List<ShoppingModel> shoppingModels = shoppingService.queryByName(name);
+        List<ShoppingModel> shoppingModels = shoppingService.queryByName(name, cityId);
         for(ShoppingModel model : shoppingModels) {
             PlacePredictModel placePredictModel = new PlacePredictModel();
             placePredictModel.setIsPoi(true);
             placePredictModel.setPoiId(model.getId().toString());
             placePredictModel.setType(model.getType());
             placePredictModel.setName(model.getName());
+            placePredictModel.setAddress(model.getAddress());
             placePredictModel.setImage(model.getCoverImage());
             placePredictModel.setTag(model.getTag());
-            String dest = model.getLongitude() + "," + model.getLatitude();
+            String dest = model.getLatitude() + "," + model.getLongitude();
             placePredictModel.setDistance(DistanceUtil.formatDistance(location, dest));
             placePredictModel.setPlaceId(model.getPlaceId());
             list.add(placePredictModel);
         }
 
         LoggerUtil.logBiz("获取匹配的购物圈", null);
-        List<AreaModel> areaModels = areaService.queryByName(name);
+        List<AreaModel> areaModels = areaService.queryByName(name, cityId);
         for(AreaModel model : areaModels) {
+            LoggerUtil.logBiz("Area model", model);
             PlacePredictModel placePredictModel = new PlacePredictModel();
             placePredictModel.setIsPoi(true);
             placePredictModel.setPoiId(model.getId().toString());
             placePredictModel.setType(model.getType());
             placePredictModel.setName(model.getAreaName());
+            placePredictModel.setAddress(model.getAddress());
             placePredictModel.setImage(model.getCoverImage());
             placePredictModel.setTag(model.getTag());
-            String dest = model.getLongitude() + "," + model.getLatitude();
+            String dest = model.getLatitude() + "," + model.getLongitude();
             placePredictModel.setDistance(DistanceUtil.formatDistance(location, dest));
             placePredictModel.setPlaceId(model.getPlaceId());
             list.add(placePredictModel);
@@ -161,19 +168,30 @@ public class GoogleMapServiceImpl implements GoogleMapService {
         String googlePlaces = getPlaceComplete(name, location);
         JSONObject placesJson = JSON.parseObject(googlePlaces);
         if("OK".equals(placesJson.getString("status"))) {
+            LoggerUtil.logBiz("google places", googlePlaces);
             JSONArray predictions = placesJson.getJSONArray("predictions");
             if(predictions != null && predictions.size() > 0) {
                 for(int i = 0; i < predictions.size(); i++) {
                     JSONObject prediction = predictions.getJSONObject(i);
+
+                    LoggerUtil.logBiz("Prediction: ", prediction.toJSONString());
+
                     String placeId = prediction.getString("place_id");
 //                    String desc = prediction.getString("description");
                     JSONObject placeDetail = getPlaceDetails(placeId);
-                    String desc = placeDetail.getString("name");
-                    String address = placeDetail.getString("formatted_address");
-                    JSONObject placeLocation = placeDetail.getJSONObject("geometry").getJSONObject("location");
+
+                    if(!"OK".equals(placeDetail.getString("status"))) {
+                        continue;
+                    }
+                    LoggerUtil.logBiz("place detail", placeDetail.toJSONString());
+
+                    JSONObject result = placeDetail.getJSONObject("result");
+                    String desc = result.getString("name");
+                    String address = result.getString("formatted_address");
+                    JSONObject placeLocation = result.getJSONObject("geometry").getJSONObject("location");
                     String lat = placeLocation.getString("lat");
                     String lng = placeLocation.getString("lng");
-                    String dest = lng + "," + lat;
+                    String dest = lat + "," + lng;
 
                     PlacePredictModel placePredictModel = new PlacePredictModel();
                     placePredictModel.setIsPoi(false);

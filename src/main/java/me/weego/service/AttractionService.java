@@ -8,5 +8,5 @@ import java.util.List;
  * @author ln
  */
 public interface AttractionService {
-     List<AttractionModel> queryByName(String attractions);
+     List<AttractionModel> queryByName(String attractions, String cityId);
 }

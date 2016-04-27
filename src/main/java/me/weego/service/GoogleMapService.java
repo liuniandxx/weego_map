@@ -17,7 +17,7 @@ public interface GoogleMapService {
 
     String getPlaceComplete(String name, String location);
 
-    List<PlacePredictModel> getPlacePredict(String name, String location);
+    List<PlacePredictModel> getPlacePredict(String name, String location, String cityId);
 
     List<PlacePredictModel> getSearchHis(String userId, String cityId, String location);
 }

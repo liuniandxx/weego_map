@@ -21,7 +21,7 @@ public class AreaServiceImplTest {
 
     @Test
     public void testQueryByName() {
-        List<AreaModel> list = areaService.queryByName("官也街");
+        List<AreaModel> list = areaService.queryByName("官也街", "569c95852fedc1e7190001ea");
         for(AreaModel areaModel : list) {
             System.out.println(areaModel);
         }

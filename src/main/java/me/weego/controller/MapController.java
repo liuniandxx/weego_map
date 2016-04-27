@@ -47,12 +47,13 @@ public class MapController {
 
     @RequestMapping(value = "place/predict", method = RequestMethod.GET)
     public ResBody<List<PlacePredictModel>> getPlacePredict(@RequestParam String place,
-                                                            @RequestParam String location) {
+                                                            @RequestParam String location,
+                                                            @RequestParam String cityId) {
         place = EncodingTool.encodeStr(place);
-        return ResBody.returnSuccess(googleMapService.getPlacePredict(place, location));
+        return ResBody.returnSuccess(googleMapService.getPlacePredict(place, location, cityId));
     }
 
-    @RequestMapping(value = "history/poi/add", method = RequestMethod.POST)
+    @RequestMapping(value = "history/poi/add", method = RequestMethod.GET)
     public void saveSearchHis(@RequestParam String userId,
                               @RequestParam String cityId,
                               @RequestParam String poiId,

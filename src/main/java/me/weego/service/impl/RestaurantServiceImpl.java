@@ -26,9 +26,11 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public List<RestaurantModel> queryByName(String name) {
+    public List<RestaurantModel> queryByName(String name, String cityId) {
         checkArgument(StringUtils.isNotBlank(name), "param name should not blank");
+        checkArgument(StringUtils.isNotBlank(cityId), "param cityId should not blank");
         LoggerUtil.logBiz("Restaurant query by name", name);
-        return restaurantDao.queryByName(name);
+        LoggerUtil.logBiz("Restaurant query by cityId", cityId);
+        return restaurantDao.queryByName(name, cityId);
     }
 }

@@ -80,7 +80,6 @@ public class MapSearchHisServiceImpl implements MapSearchHisService {
                 document.put("tag", model.getTag());
                 document.put("last_modify_time", new Date());
                 mapSearchHisDao.saveSearchHis(document);
-//                document.put("distance")
             } else if("1".equals(type)) {
                 RestaurantModel model = restaurantDao.findById(poiId);
                 checkArgument(model != null, "Restaurant is not exist");
@@ -134,9 +133,11 @@ public class MapSearchHisServiceImpl implements MapSearchHisService {
             document.put("is_poi", false);
 
             JSONObject placeDetail = googleMapService.getPlaceDetails(placeId);
-            String desc = placeDetail.getString("name");
-            String address = placeDetail.getString("formatted_address");
-            JSONObject placeLocation = placeDetail.getJSONObject("geometry").getJSONObject("location");
+            JSONObject result = placeDetail.getJSONObject("result");
+
+            String desc = result.getString("name");
+            String address = result.getString("formatted_address");
+            JSONObject placeLocation = result.getJSONObject("geometry").getJSONObject("location");
             String lat = placeLocation.getString("lat");
             String lng = placeLocation.getString("lng");
             document.put("name", desc);

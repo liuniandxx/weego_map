@@ -8,6 +8,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import me.weego.model.ShoppingModel;
+import me.weego.util.LoggerUtil;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
@@ -31,10 +32,11 @@ public class ShoppingDao {
         this.collection = mongo.getCollection("shoppings");
     }
 
-    public List<ShoppingModel> queryByName(String name) {
+    public List<ShoppingModel> queryByName(String name, String cityId) {
         Pattern pattern = Pattern.compile("^.*" + name + ".*$", Pattern.CASE_INSENSITIVE);
         BasicDBObject query = new BasicDBObject();
         query.put("name", pattern);
+        query.put("city_id", new ObjectId(cityId));
         BasicDBObject sort = new BasicDBObject();
         sort.put("name", 1);
         final List<ShoppingModel> list = Lists.newArrayList();
@@ -59,8 +61,16 @@ public class ShoppingDao {
         ShoppingModel shoppingModel = new ShoppingModel();
         shoppingModel.setId(elem.getObjectId("_id"));
         shoppingModel.setName(elem.getString("name"));
-        shoppingModel.setLatitude(Strings.nullToEmpty(elem.getString("latitude")));
-        shoppingModel.setLongitude(Strings.nullToEmpty(elem.getString("longitude")));
+        try {
+            shoppingModel.setLatitude(Strings.nullToEmpty(elem.getString("latitude")));
+            shoppingModel.setLongitude(Strings.nullToEmpty(elem.getString("longitude")));
+        } catch(Exception e) {
+            LoggerUtil.logBiz("cast exception", e);
+            Double lat = elem.getDouble("latitude");
+            Double lng = elem.getDouble("longitude");
+            shoppingModel.setLatitude(lat.toString());
+            shoppingModel.setLongitude(lng.toString());
+        }
         shoppingModel.setAddress(Strings.nullToEmpty(elem.getString("address")));
         shoppingModel.setType(Strings.nullToEmpty(elem.getString("type")));
         shoppingModel.setPlaceId(Strings.nullToEmpty(elem.getString("place_id")));

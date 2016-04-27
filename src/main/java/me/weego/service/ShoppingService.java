@@ -8,5 +8,5 @@ import java.util.List;
  * @author ln
  */
 public interface ShoppingService {
-    List<ShoppingModel> queryByName(String name);
+    List<ShoppingModel> queryByName(String name, String cityId);
 }

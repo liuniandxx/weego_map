@@ -21,7 +21,7 @@ public class ShoppingServiceImplTest {
 
     @Test
     public void testQueryByName() {
-        List<ShoppingModel> list = shoppingService.queryByName("Zohiko");
+        List<ShoppingModel> list = shoppingService.queryByName("Zohiko", "569c95852fedc1e7190001ea");
         for(ShoppingModel shoppingModel : list) {
             System.out.println(shoppingModel);
             System.out.println(shoppingModel.getId().toString());

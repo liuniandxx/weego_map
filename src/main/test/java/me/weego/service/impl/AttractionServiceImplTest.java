@@ -22,7 +22,7 @@ public class AttractionServiceImplTest {
 
     @Test
     public void testQueryByName() {
-        List<AttractionModel> list = attractionService.queryByName("ling");
+        List<AttractionModel> list = attractionService.queryByName("ling", "569c95852fedc1e7190001ea");
         for(AttractionModel elem : list) {
             System.out.println(elem);
         }

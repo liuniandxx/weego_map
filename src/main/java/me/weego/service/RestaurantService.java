@@ -10,5 +10,5 @@ import java.util.List;
 public interface RestaurantService {
     List<RestaurantModel> query();
 
-    List<RestaurantModel> queryByName(String name);
+    List<RestaurantModel> queryByName(String name, String cityId);
 }

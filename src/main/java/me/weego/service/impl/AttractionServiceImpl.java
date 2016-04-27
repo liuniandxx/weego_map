@@ -17,7 +17,7 @@ public class AttractionServiceImpl implements AttractionService{
     private AttractionDao attractionDao;
 
     @Override
-    public List<AttractionModel> queryByName(String attractions) {
-        return attractionDao.queryByName(attractions);
+    public List<AttractionModel> queryByName(String attractions, String cityId) {
+        return attractionDao.queryByName(attractions, cityId);
     }
 }

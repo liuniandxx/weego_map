@@ -8,6 +8,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import me.weego.model.RestaurantModel;
+import me.weego.util.LoggerUtil;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
@@ -40,10 +41,11 @@ public class RestaurantDao {
         return list;
     }
 
-    public List<RestaurantModel> queryByName(String name) {
+    public List<RestaurantModel> queryByName(String name, String cityId) {
         Pattern pattern = Pattern.compile("^.*" + name + ".*$", Pattern.CASE_INSENSITIVE);
         BasicDBObject query = new BasicDBObject();
         query.put("name", pattern);
+        query.put("city_id", new ObjectId(cityId));
         BasicDBObject sort = new BasicDBObject();
         sort.put("name", 1);
         final List<RestaurantModel> list = Lists.newArrayList();
@@ -69,8 +71,16 @@ public class RestaurantDao {
         restaurantModel.setId(elem.getObjectId("_id"));
         restaurantModel.setName(elem.getString("name"));
         restaurantModel.setAddress(Strings.nullToEmpty(elem.getString("address")));
-        restaurantModel.setLatitude(Strings.nullToEmpty(elem.getString("latitude")));
-        restaurantModel.setLongitude(Strings.nullToEmpty(elem.getString("longitude")));
+        try {
+            restaurantModel.setLatitude(Strings.nullToEmpty(elem.getString("latitude")));
+            restaurantModel.setLongitude(Strings.nullToEmpty(elem.getString("longitude")));
+        } catch(Exception e) {
+            LoggerUtil.logBiz("cast exception", e);
+            Double lat = elem.getDouble("latitude");
+            Double lng = elem.getDouble("longitude");
+            restaurantModel.setLatitude(lat.toString());
+            restaurantModel.setLongitude(lng.toString());
+        }
         restaurantModel.setType(Strings.nullToEmpty(elem.getString("type")));
         restaurantModel.setPlaceId(Strings.nullToEmpty(elem.getString("place_id")));
         restaurantModel.setCoverImage(Strings.nullToEmpty(elem.getString("cover_image")));

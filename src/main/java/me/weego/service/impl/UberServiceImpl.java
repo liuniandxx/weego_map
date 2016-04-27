@@ -32,7 +32,7 @@ public class UberServiceImpl implements UberService {
         String[] startPoint = start.split(",", 2);
         String[] endPoint = end.split(",", 2);
 
-        return getEstimatePrice(startPoint[1], startPoint[0], endPoint[1], endPoint[0], seatCount);
+        return getEstimatePrice(startPoint[0], startPoint[1], endPoint[0], endPoint[1], seatCount);
     }
 
     private String getEstimatePrice(String startLatitude, String startLongitude, String endLatitude, String endLongitude, int seatCount) {

@@ -24,7 +24,7 @@ public class GoogleMapServiceImplTest {
 
     @Test
     public void testGetPlacedetals() {
-        System.out.println(googleMapService.getPlaceDetails("ChIJ2XRD3Jh2YzYRE1lUrcku6io"));
+        System.out.println(googleMapService.getPlaceDetails("ChIJ31zO2-IIAWARw_L-Hkg_4rQ"));
     }
 
     @Test

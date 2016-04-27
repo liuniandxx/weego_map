@@ -22,9 +22,11 @@ public class AreaServiceImpl implements AreaService{
     private AreaDao areaDao;
 
     @Override
-    public List<AreaModel> queryByName(String areaName) {
+    public List<AreaModel> queryByName(String areaName, String cityId) {
         checkArgument(StringUtils.isNotBlank(areaName), "param areaName should not blank");
+        checkArgument(StringUtils.isNotBlank(cityId), "param cityId should not blank");
         LoggerUtil.logBiz("Area query by name", areaName);
-        return  areaDao.queryByName(areaName);
+        LoggerUtil.logBiz("Area query by cityId", cityId);
+        return  areaDao.queryByName(areaName, cityId);
     }
 }

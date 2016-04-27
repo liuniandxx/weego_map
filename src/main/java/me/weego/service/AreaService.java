@@ -8,5 +8,5 @@ import java.util.List;
  * @author ln
  */
 public interface AreaService {
-    List<AreaModel> queryByName(String areaName);
+    List<AreaModel> queryByName(String areaName, String cityId);
 }

@@ -23,7 +23,7 @@ public class RestaurantModelTest {
     @Test
     public void testQueryByName() {
         String name = "Cinnamon";
-        List<RestaurantModel> list = restaurantService.queryByName(name);
+        List<RestaurantModel> list = restaurantService.queryByName(name, "569c95852fedc1e7190001ea");
 
         for(RestaurantModel elem : list) {
             System.out.println(elem.toString());

@@ -23,7 +23,7 @@ public class RestaurantController extends BaseController {
     }
 
     @RequestMapping(value = "search", method = RequestMethod.GET)
-    public ResBody getRestaurants(@RequestParam String name) {
-        return ResBody.returnSuccess(restaurantService.queryByName(name));
+    public ResBody getRestaurants(@RequestParam String name, @RequestParam String cityId) {
+        return ResBody.returnSuccess(restaurantService.queryByName(name, cityId));
     }
 }

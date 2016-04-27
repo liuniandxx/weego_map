@@ -21,10 +21,11 @@ public class ShoppingServiceImpl implements ShoppingService {
     private ShoppingDao shoppingDao;
 
     @Override
-    public List<ShoppingModel> queryByName(String name) {
+    public List<ShoppingModel> queryByName(String name, String cityId) {
         checkArgument(StringUtils.isNotBlank(name), "param name should not blank");
-
+        checkArgument(StringUtils.isNotBlank(cityId), "param cityId should not blank");
         LoggerUtil.logBiz("Shopping query by name", name);
-        return shoppingDao.queryByName(name);
+        LoggerUtil.logBiz("Shopping query by cityId", cityId);
+        return shoppingDao.queryByName(name, cityId);
     }
 }

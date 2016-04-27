@@ -34,15 +34,15 @@ public class DistanceUtil {
 
     /**
      *
-     * @param origin 起点 格式: 经度,纬度
-     * @param dest   终点 格式: 经度,纬度
+     * @param origin 起点 格式: 纬度，经度
+     * @param dest   终点 格式: 纬度，精度
      * @return     两坐标间的距离
      *
      */
     public static double getDistance(String origin, String dest) {
         String[] originCoordinate = origin.split("[,，]");
         String[] destCoordinate = dest.split("[,，]");
-        return getDistance(originCoordinate[1], originCoordinate[0], destCoordinate[1], destCoordinate[0]);
+        return getDistance(originCoordinate[0], originCoordinate[1], destCoordinate[0], destCoordinate[1]);
     }
 
     public static String formatDistance(String orgin, String dest) {

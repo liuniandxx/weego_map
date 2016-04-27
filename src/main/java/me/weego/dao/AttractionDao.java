@@ -9,6 +9,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import me.weego.model.AttractionModel;
+import me.weego.util.LoggerUtil;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
@@ -32,13 +33,14 @@ public class AttractionDao {
         this.collection = mongo.getCollection("latestattractions");
     }
 
-    public List<AttractionModel> queryByName(String attractions) {
+    public List<AttractionModel> queryByName(String attractions, String cityId) {
         Pattern pattern = Pattern.compile("^.*" + attractions + ".*$", Pattern.CASE_INSENSITIVE);
         BasicDBObject query = new BasicDBObject();
         BasicDBList values = new BasicDBList();
         values.add(new BasicDBObject("attractions", pattern));
         values.add(new BasicDBObject("attractions_en", pattern));
         query.put("$or", values);
+        query.put("city_id", new ObjectId(cityId));
         final List<AttractionModel> list = Lists.newArrayList();
         FindIterable<Document> iterator = collection.find(query);
         for(Document elem : iterator) {
@@ -63,8 +65,16 @@ public class AttractionDao {
         attractionModel.setAttractions(Strings.nullToEmpty(elem.getString("attractions")));
         attractionModel.setAttractionsEn(Strings.nullToEmpty(elem.getString("attractions_en")));
         attractionModel.setAddress(Strings.nullToEmpty(elem.getString("address")));
-        attractionModel.setLatitude(Strings.nullToEmpty(elem.getString("latitude")));
-        attractionModel.setLongitude(Strings.nullToEmpty(elem.getString("longitude")));
+        try {
+            attractionModel.setLatitude(Strings.nullToEmpty(elem.getString("latitude")));
+            attractionModel.setLongitude(Strings.nullToEmpty(elem.getString("longitude")));
+        } catch (Exception e) {
+            LoggerUtil.logBiz("cast exception", e);
+            Double lat = elem.getDouble("latitude");
+            Double lng = elem.getDouble("longitude");
+            attractionModel.setLatitude(lat.toString());
+            attractionModel.setLongitude(lng.toString());
+        }
         attractionModel.setPlaceId(Strings.nullToEmpty(elem.getString("place_id")));
         attractionModel.setCoverImage(Strings.nullToEmpty(elem.getString("coverImageName")));
         attractionModel.setType(Strings.nullToEmpty(elem.getString("type")));
