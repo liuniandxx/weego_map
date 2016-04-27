@@ -19,7 +19,7 @@ import java.util.List;
  * @author ln
  */
 @RestController
-@RequestMapping("/map")
+@RequestMapping("/map/v1")
 public class MapController {
     @Resource
     private GoogleMapService googleMapService;
@@ -40,9 +40,10 @@ public class MapController {
     }
 
     @RequestMapping(value = "search/history", method = RequestMethod.GET)
-    public ResBody<List<MapSearchHisModel>> getSearchHistory(@RequestParam String userId,
-                                                             @RequestParam String cityId) {
-        return ResBody.returnSuccess(mapSearchHisService.getMapSearchHis(userId, cityId));
+    public ResBody<List<PlacePredictModel>> getSearchHistory(@RequestParam String userId,
+                                                             @RequestParam String cityId,
+                                                             @RequestParam String location) {
+        return ResBody.returnSuccess(googleMapService.getSearchHis(userId, cityId, location));
     }
 
     @RequestMapping(value = "place/predict", method = RequestMethod.GET)

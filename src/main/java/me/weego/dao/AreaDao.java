@@ -1,5 +1,7 @@
 package me.weego.dao;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.mongodb.BasicDBList;
@@ -65,6 +67,17 @@ public class AreaDao {
         areaModel.setAddress(Strings.nullToEmpty(elem.getString("address")));
         areaModel.setType(Strings.nullToEmpty(elem.getString("type")));
         areaModel.setPlaceId(Strings.nullToEmpty(elem.getString("place_id")));
+        areaModel.setCoverImage(Strings.nullToEmpty(elem.getString("cover_image")));
+
+        String json = elem.toJson();
+        JSONObject jsonObject = JSONObject.parseObject(json);
+        JSONArray tags = jsonObject.getJSONArray("tags");
+        if(tags != null && tags.size() > 0) {
+            areaModel.setTag(tags.get(0).toString());
+        } else {
+            areaModel.setTag("");
+        }
+
         return areaModel;
     }
 }

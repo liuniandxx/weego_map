@@ -1,5 +1,7 @@
 package me.weego.dao;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.mongodb.BasicDBList;
@@ -64,6 +66,20 @@ public class AttractionDao {
         attractionModel.setLatitude(Strings.nullToEmpty(elem.getString("latitude")));
         attractionModel.setLongitude(Strings.nullToEmpty(elem.getString("longitude")));
         attractionModel.setPlaceId(Strings.nullToEmpty(elem.getString("place_id")));
+        attractionModel.setCoverImage(Strings.nullToEmpty(elem.getString("coverImageName")));
+        attractionModel.setType(Strings.nullToEmpty(elem.getString("type")));
+        String json = elem.toJson();
+        JSONObject jsonObject = JSONObject.parseObject(json);
+        JSONArray subLabelNew = jsonObject.getJSONArray("subLabelNew");
+        if(subLabelNew != null && subLabelNew.size() > 0) {
+            for(int i= 0; i < subLabelNew.size(); i++) {
+                if(!Strings.isNullOrEmpty(subLabelNew.getJSONObject(i).getString("label"))) {
+                    attractionModel.setTag(subLabelNew.getJSONObject(i).getString("label"));
+                }
+            }
+        } else {
+            attractionModel.setTag("");
+        }
         return attractionModel;
     }
 }

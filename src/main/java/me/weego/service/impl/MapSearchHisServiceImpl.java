@@ -76,6 +76,8 @@ public class MapSearchHisServiceImpl implements MapSearchHisService {
                 document.put("address", model.getAddress());
                 document.put("latitude", model.getLatitude());
                 document.put("longitude", model.getLongitude());
+                document.put("image",model.getCoverImage());
+                document.put("tag", model.getTag());
                 document.put("last_modify_time", new Date());
                 mapSearchHisDao.saveSearchHis(document);
 //                document.put("distance")
@@ -87,6 +89,8 @@ public class MapSearchHisServiceImpl implements MapSearchHisService {
                 document.put("address", model.getAddress());
                 document.put("latitude", model.getLatitude());
                 document.put("longitude", model.getLongitude());
+                document.put("image",model.getCoverImage());
+                document.put("tag", model.getTag());
                 document.put("last_modify_time", new Date());
                 mapSearchHisDao.saveSearchHis(document);
             } else if("2".equals(type)) {
@@ -97,6 +101,8 @@ public class MapSearchHisServiceImpl implements MapSearchHisService {
                 document.put("address", model.getAddress());
                 document.put("latitude", model.getLatitude());
                 document.put("longitude", model.getLongitude());
+                document.put("image",model.getCoverImage());
+                document.put("tag", model.getTag());
                 document.put("last_modify_time", new Date());
                 mapSearchHisDao.saveSearchHis(document);
             } else if("3".equals(type)) {
@@ -107,6 +113,8 @@ public class MapSearchHisServiceImpl implements MapSearchHisService {
                 document.put("address", model.getAddress());
                 document.put("latitude", model.getLatitude());
                 document.put("longitude", model.getLongitude());
+                document.put("image",model.getCoverImage());
+                document.put("tag", model.getTag());
                 document.put("last_modify_time", new Date());
                 mapSearchHisDao.saveSearchHis(document);
             }
@@ -136,6 +144,8 @@ public class MapSearchHisServiceImpl implements MapSearchHisService {
             document.put("place_id", placeId);
             document.put("latitude", lat);
             document.put("longitude", lng);
+            document.put("image","");
+            document.put("tag", "");
             document.put("last_modify_time", new Date());
             mapSearchHisDao.saveSearchHis(document);
         }

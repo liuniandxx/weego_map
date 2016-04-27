@@ -24,6 +24,10 @@ public class AttractionModel {
 
     private String placeId;
 
+    private String coverImage;
+
+    private String tag;
+
     public ObjectId getId() {
         return id;
     }
@@ -88,6 +92,22 @@ public class AttractionModel {
         this.placeId = placeId;
     }
 
+    public String getCoverImage() {
+        return coverImage;
+    }
+
+    public void setCoverImage(String coverImage) {
+        this.coverImage = coverImage;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
@@ -99,6 +119,8 @@ public class AttractionModel {
                 .append("address", address)
                 .append("type", type)
                 .append("placeId", placeId)
+                .append("coverImage", coverImage)
+                .append("tag", tag)
                 .toString();
     }
 }

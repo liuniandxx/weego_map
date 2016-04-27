@@ -32,7 +32,12 @@ public class MapSearchHisModel {
 
     private String address;
 
+    private String image;
+
+    private String tag;
+
     private Date lastModifyTime;
+
 
     public ObjectId getId() {
         return id;
@@ -130,6 +135,22 @@ public class MapSearchHisModel {
         this.lastModifyTime = lastModifyTime;
     }
 
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
@@ -144,6 +165,7 @@ public class MapSearchHisModel {
                     .append("latitude", latitude)
                     .append("longitude", longitude)
                     .append("lastModifyTime", lastModifyTime)
+//                    .append("lastMon")
                     .toString();
     }
 }

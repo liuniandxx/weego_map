@@ -36,6 +36,9 @@ public class GoogleMapServiceImpl implements GoogleMapService {
     @Resource
     private AreaService areaService;
 
+    @Resource
+    private MapSearchHisService mapSearchHisService;
+
     @Override
     public String getNearBy(String location, String name) {
         LoggerUtil.logBiz("***** Google nearby search start *****", null);
@@ -98,6 +101,8 @@ public class GoogleMapServiceImpl implements GoogleMapService {
             placePredictModel.setType(model.getType());
             placePredictModel.setName(model.getAttractions());
             placePredictModel.setAddress(model.getAddress());
+            placePredictModel.setImage(model.getCoverImage());
+            placePredictModel.setTag(model.getTag());
 
             String dest = model.getLongitude() + "," + model.getLatitude();
             placePredictModel.setDistance(DistanceUtil.formatDistance(location, dest));
@@ -113,6 +118,8 @@ public class GoogleMapServiceImpl implements GoogleMapService {
             placePredictModel.setPoiId(model.getId().toString());
             placePredictModel.setType(model.getType());
             placePredictModel.setName(model.getName());
+            placePredictModel.setImage(model.getCoverImage());
+            placePredictModel.setTag(model.getTag());
             String dest = model.getLongitude() + "," + model.getLatitude();
             placePredictModel.setDistance(DistanceUtil.formatDistance(location, dest));
             placePredictModel.setPlaceId(model.getPlaceId());
@@ -127,6 +134,8 @@ public class GoogleMapServiceImpl implements GoogleMapService {
             placePredictModel.setPoiId(model.getId().toString());
             placePredictModel.setType(model.getType());
             placePredictModel.setName(model.getName());
+            placePredictModel.setImage(model.getCoverImage());
+            placePredictModel.setTag(model.getTag());
             String dest = model.getLongitude() + "," + model.getLatitude();
             placePredictModel.setDistance(DistanceUtil.formatDistance(location, dest));
             placePredictModel.setPlaceId(model.getPlaceId());
@@ -141,6 +150,8 @@ public class GoogleMapServiceImpl implements GoogleMapService {
             placePredictModel.setPoiId(model.getId().toString());
             placePredictModel.setType(model.getType());
             placePredictModel.setName(model.getAreaName());
+            placePredictModel.setImage(model.getCoverImage());
+            placePredictModel.setTag(model.getTag());
             String dest = model.getLongitude() + "," + model.getLatitude();
             placePredictModel.setDistance(DistanceUtil.formatDistance(location, dest));
             placePredictModel.setPlaceId(model.getPlaceId());
@@ -171,6 +182,8 @@ public class GoogleMapServiceImpl implements GoogleMapService {
                     placePredictModel.setAddress(address);
                     placePredictModel.setType("");
                     placePredictModel.setPlaceId(placeId);
+                    placePredictModel.setImage("");
+                    placePredictModel.setTag("");
                     placePredictModel.setDistance(DistanceUtil.formatDistance(location, dest));
                     list.add(placePredictModel);
                 }
@@ -178,6 +191,16 @@ public class GoogleMapServiceImpl implements GoogleMapService {
         }
 
         return list;
+    }
+
+    @Override
+    public List<PlacePredictModel> getSearchHis(String userId, String cityId, String location) {
+        List<MapSearchHisModel> hisModels = mapSearchHisService.getMapSearchHis(userId, cityId);
+        List<PlacePredictModel> predictModels = Lists.newArrayList();
+        for(MapSearchHisModel his : hisModels) {
+            predictModels.add(convertToPredict(his, location));
+        }
+        return predictModels;
     }
 
 
@@ -211,12 +234,27 @@ public class GoogleMapServiceImpl implements GoogleMapService {
         StringBuilder placeCompleteUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/autocomplete/json");
         placeCompleteUrl.append("?input=");
         placeCompleteUrl.append(input);
-//        placeCompleteUrl.append("&radius=50000");
+        placeCompleteUrl.append("&radius=50000");
         placeCompleteUrl.append("&location=");
         placeCompleteUrl.append(location);
         placeCompleteUrl.append("&key=");
         placeCompleteUrl.append(baseService.getKey(SpiderKeyEnum.GOOGLE_PLACE.getType()));
         placeCompleteUrl.append("&language=zh-CN");
         return placeCompleteUrl.toString();
+    }
+
+    private PlacePredictModel convertToPredict(MapSearchHisModel his, String location) {
+        PlacePredictModel placePredictModel = new PlacePredictModel();
+        placePredictModel.setIsPoi(his.getIsPoi());
+        placePredictModel.setPoiId(his.getPoiId());
+        placePredictModel.setName(his.getName());
+        placePredictModel.setAddress(his.getAddress());
+        placePredictModel.setImage(his.getImage());
+        placePredictModel.setTag(his.getTag());
+        placePredictModel.setType(his.getType());
+        placePredictModel.setPlaceId(his.getPlaceId());
+        String dest = his.getLongitude() + "," + his.getLatitude();
+        placePredictModel.setDistance(DistanceUtil.formatDistance(location, dest));
+        return placePredictModel;
     }
 }

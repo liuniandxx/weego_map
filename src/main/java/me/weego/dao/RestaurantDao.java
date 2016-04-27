@@ -1,5 +1,7 @@
 package me.weego.dao;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.mongodb.BasicDBObject;
@@ -74,6 +76,20 @@ public class RestaurantDao {
         restaurantModel.setLongitude(Strings.nullToEmpty(elem.getString("longitude")));
         restaurantModel.setType(Strings.nullToEmpty(elem.getString("type")));
         restaurantModel.setPlaceId(Strings.nullToEmpty(elem.getString("place_id")));
+        restaurantModel.setCoverImage(Strings.nullToEmpty(elem.getString("cover_image")));
+
+        String json = elem.toJson();
+        JSONObject jsonObject = JSONObject.parseObject(json);
+        JSONArray category = jsonObject.getJSONArray("category");
+        if(category != null && category.size() > 0) {
+            for(int i= 0; i < category.size(); i++) {
+                if(!Strings.isNullOrEmpty(category.getJSONObject(i).getString("name"))) {
+                    restaurantModel.setTag(category.getJSONObject(i).getString("name"));
+                }
+            }
+        } else {
+            restaurantModel.setTag("");
+        }
         return restaurantModel;
     }
 }

@@ -19,7 +19,7 @@ public class GoogleMapServiceImplTest {
 
     @Test
     public void testGetNearbyUrl() {
-        System.out.println(googleMapService.getNearBy("39.90960456049752,116.3972282409668", "天安门  东城区"));
+        System.out.println(googleMapService.getNearBy("39.994952,116.476355", "望京SOHO"));
     }
 
     @Test
@@ -29,7 +29,6 @@ public class GoogleMapServiceImplTest {
 
     @Test
     public void testGetPlaceComplete() {
-        //System.out.println(googleMapService.getPlaceComplete("艾菲尔铁塔"));
     }
 }
 

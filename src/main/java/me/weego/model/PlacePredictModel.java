@@ -20,6 +20,10 @@ public class PlacePredictModel {
 
     private String address;
 
+    private String image;
+
+    private String tag;
+
     public boolean getIsPoi() {
         return isPoi;
     }
@@ -77,6 +81,22 @@ public class PlacePredictModel {
         this.address = address;
     }
 
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
@@ -87,6 +107,8 @@ public class PlacePredictModel {
                     .append("distance", distance)
                     .append("name", name)
                     .append("address", address)
+                    .append("image", image)
+                    .append("tag")
                     .toString();
     }
 }
