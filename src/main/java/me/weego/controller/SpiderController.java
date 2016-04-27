@@ -3,7 +3,6 @@ package me.weego.controller;
 import me.weego.pojo.ResBody;
 import me.weego.service.BaseService;
 import me.weego.service.SpiderService;
-import me.weego.util.LoggerUtil;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
@@ -13,9 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 
 import static com.google.common.base.Preconditions.checkArgument;
 

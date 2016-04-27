@@ -1,7 +1,6 @@
 package me.weego.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import me.weego.model.MapSearchHisModel;
 import me.weego.model.PlacePredictModel;
 import me.weego.pojo.ResBody;
 import me.weego.service.GoogleMapService;

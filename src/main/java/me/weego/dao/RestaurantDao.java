@@ -5,10 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.mongodb.BasicDBObject;
-import com.mongodb.Block;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.util.JSON;
 import me.weego.model.RestaurantModel;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -16,7 +14,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import javax.print.Doc;
 import java.util.List;
 import java.util.regex.Pattern;
 

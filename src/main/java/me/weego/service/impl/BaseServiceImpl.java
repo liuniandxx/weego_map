@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Random;
 
@@ -54,7 +53,7 @@ public class BaseServiceImpl implements BaseService{
                 result = response.body().string();
             }
         } catch (IOException e) {
-            LoggerUtil.logError("google http error", e);
+            LoggerUtil.logError("http request error", e);
         }
         return result;
     }

@@ -1,20 +1,12 @@
 package me.weego.service.impl;
 
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
-import jdk.nashorn.internal.runtime.regexp.joni.Regex;
 import me.weego.constant.SpiderKeyEnum;
 import me.weego.service.BaseService;
 import me.weego.service.UberService;
 import me.weego.util.LoggerUtil;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -53,27 +45,14 @@ public class UberServiceImpl implements UberService {
         String uberUrl = getUberEstimatePriceUrl(startLatitude, startLongitude, endLatitude, endLongitude, seatCount);
         LoggerUtil.logBiz("request uber url", uberUrl);
         LoggerUtil.logBiz("beginnig fetch estimates price **************",null);
-        OkHttpClient okHttpClient = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url(uberUrl)
-                .build();
-
-        String result = "";
-        try {
-            Response response = okHttpClient.newCall(request).execute();
-            if (response.isSuccessful()){
-                result = response.body().string();
-            }
-        } catch (IOException e) {
-            LoggerUtil.logError("uber estimates price http error", e);
-        }
+        String result = baseService.getHttpRequest(uberUrl);
         LoggerUtil.logBiz("ending fetch estimates price **************",null);
         LoggerUtil.logBiz("estimates price result", result);
         return result;
     }
 
     private String getUberEstimatePriceUrl(String startLatitude, String startLongitude, String endLatitude, String endLongitude, int seatCount) {
-        String uberUrl = "https://api.uber.com.cn/v1/estimates/price";
+        String uberUrl = "https://api.uber.com/v1/estimates/price";
         uberUrl += "?start_latitude=" + startLatitude;
         uberUrl += "&start_longitude=" + startLongitude;
         uberUrl += "&end_latitude=" + endLatitude;

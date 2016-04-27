@@ -1,8 +1,5 @@
 package me.weego.service.impl;
 
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
 import me.weego.constant.SpiderKeyEnum;
 import me.weego.service.BaseService;
 import me.weego.service.SpiderService;
@@ -12,7 +9,6 @@ import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
