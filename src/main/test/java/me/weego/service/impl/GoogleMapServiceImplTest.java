@@ -26,6 +26,11 @@ public class GoogleMapServiceImplTest {
     public void testGetPlacedetals() {
         System.out.println(googleMapService.getPlaceDetails("ChIJ2XRD3Jh2YzYRE1lUrcku6io"));
     }
+
+    @Test
+    public void testGetPlaceComplete() {
+        //System.out.println(googleMapService.getPlaceComplete("艾菲尔铁塔"));
+    }
 }
 
 

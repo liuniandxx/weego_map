@@ -7,6 +7,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import me.weego.model.ShoppingModel;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
@@ -37,16 +38,30 @@ public class ShoppingDao {
         final List<ShoppingModel> list = Lists.newArrayList();
         FindIterable<Document> iterable = collection.find(query).sort(sort);
         for(Document elem : iterable) {
-            ShoppingModel shoppingModel = new ShoppingModel();
-            shoppingModel.setId(elem.getObjectId("_id"));
-            shoppingModel.setName(elem.getString("name"));
-            shoppingModel.setLatitude(Strings.nullToEmpty(elem.getString("latitude")));
-            shoppingModel.setLongitude(Strings.nullToEmpty(elem.getString("longitude")));
-            shoppingModel.setAddress(Strings.nullToEmpty(elem.getString("address")));
-            shoppingModel.setType(Strings.nullToEmpty(elem.getString("type")));
-            shoppingModel.setPlaceId(Strings.nullToEmpty(elem.getString("place_id")));
-            list.add(shoppingModel);
+            list.add(convertToShopping(elem));
         }
         return list;
+    }
+
+    public ShoppingModel findById(String id) {
+        BasicDBObject query = new BasicDBObject();
+        query.put("_id", new ObjectId(id));
+        FindIterable<Document> iterable = collection.find(query);
+        for(Document elem : iterable) {
+            return convertToShopping(elem);
+        }
+        return null;
+    }
+
+    private ShoppingModel convertToShopping(Document elem) {
+        ShoppingModel shoppingModel = new ShoppingModel();
+        shoppingModel.setId(elem.getObjectId("_id"));
+        shoppingModel.setName(elem.getString("name"));
+        shoppingModel.setLatitude(Strings.nullToEmpty(elem.getString("latitude")));
+        shoppingModel.setLongitude(Strings.nullToEmpty(elem.getString("longitude")));
+        shoppingModel.setAddress(Strings.nullToEmpty(elem.getString("address")));
+        shoppingModel.setType(Strings.nullToEmpty(elem.getString("type")));
+        shoppingModel.setPlaceId(Strings.nullToEmpty(elem.getString("place_id")));
+        return shoppingModel;
     }
 }

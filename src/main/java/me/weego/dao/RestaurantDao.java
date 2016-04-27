@@ -9,6 +9,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.util.JSON;
 import me.weego.model.RestaurantModel;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
@@ -40,7 +41,6 @@ public class RestaurantDao {
         return list;
     }
 
-
     public List<RestaurantModel> queryByName(String name) {
         Pattern pattern = Pattern.compile("^.*" + name + ".*$", Pattern.CASE_INSENSITIVE);
         BasicDBObject query = new BasicDBObject();
@@ -50,16 +50,30 @@ public class RestaurantDao {
         final List<RestaurantModel> list = Lists.newArrayList();
         FindIterable<Document> iterable = collection.find(query).sort(sort);
         for (Document elem : iterable) {
-            RestaurantModel restaurantModel = new RestaurantModel();
-            restaurantModel.setId(elem.getObjectId("_id"));
-            restaurantModel.setName(elem.getString("name"));
-            restaurantModel.setAddress(Strings.nullToEmpty(elem.getString("address")));
-            restaurantModel.setLatitude(Strings.nullToEmpty(elem.getString("latitude")));
-            restaurantModel.setLongitude(Strings.nullToEmpty(elem.getString("longitude")));
-            restaurantModel.setType(Strings.nullToEmpty(elem.getString("type")));
-            restaurantModel.setPlaceId(Strings.nullToEmpty(elem.getString("place_id")));
-            list.add(restaurantModel);
+            list.add(convertToRestaurant(elem));
         }
         return list;
+    }
+
+    public RestaurantModel findById(String id) {
+        BasicDBObject query = new BasicDBObject();
+        query.put("_id", new ObjectId(id));
+        FindIterable<Document> iterable = collection.find(query);
+        for(Document elem : iterable) {
+            return convertToRestaurant(elem);
+        }
+        return null;
+    }
+
+    private RestaurantModel convertToRestaurant(Document elem) {
+        RestaurantModel restaurantModel = new RestaurantModel();
+        restaurantModel.setId(elem.getObjectId("_id"));
+        restaurantModel.setName(elem.getString("name"));
+        restaurantModel.setAddress(Strings.nullToEmpty(elem.getString("address")));
+        restaurantModel.setLatitude(Strings.nullToEmpty(elem.getString("latitude")));
+        restaurantModel.setLongitude(Strings.nullToEmpty(elem.getString("longitude")));
+        restaurantModel.setType(Strings.nullToEmpty(elem.getString("type")));
+        restaurantModel.setPlaceId(Strings.nullToEmpty(elem.getString("place_id")));
+        return restaurantModel;
     }
 }

@@ -24,7 +24,9 @@ public class MapSearchHisModel {
 
     private String placeId;
 
-    private int distance;
+    private String latitude;
+
+    private String longitude;
 
     private String name;
 
@@ -88,12 +90,20 @@ public class MapSearchHisModel {
         this.placeId = placeId;
     }
 
-    public int getDistance() {
-        return distance;
+    public String getLatitude() {
+        return latitude;
     }
 
-    public void setDistance(int distance) {
-        this.distance = distance;
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
     }
 
     public String getName() {
@@ -131,7 +141,8 @@ public class MapSearchHisModel {
                     .append("type", type)
                     .append("name", name)
                     .append("address", address)
-                    .append("distance", distance)
+                    .append("latitude", latitude)
+                    .append("longitude", longitude)
                     .append("lastModifyTime", lastModifyTime)
                     .toString();
     }

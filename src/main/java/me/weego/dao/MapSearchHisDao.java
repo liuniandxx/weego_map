@@ -8,12 +8,14 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.result.DeleteResult;
 import me.weego.model.MapSearchHisModel;
 import me.weego.util.LoggerUtil;
+import org.apache.commons.lang3.text.StrSubstitutor;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -44,10 +46,13 @@ public class MapSearchHisDao {
             mapSearchHisModel.setName(elem.getString("name"));
             mapSearchHisModel.setAddress(Strings.nullToEmpty(elem.getString("address")));
             mapSearchHisModel.setIsPoi(elem.getBoolean("is_poi"));
+            mapSearchHisModel.setPoiId(elem.getString("poi_id"));
             mapSearchHisModel.setUserId(elem.getString("user_id"));
             mapSearchHisModel.setCityId(elem.getObjectId("city_id"));
             mapSearchHisModel.setType(Strings.nullToEmpty(elem.getString("type")));
-            mapSearchHisModel.setDistance(elem.getInteger("distance"));
+//            mapSearchHisModel.setDistance(elem.getString("distance"));
+            mapSearchHisModel.setLatitude(elem.getString("latitude"));
+            mapSearchHisModel.setLongitude(elem.getString("longitude"));
             mapSearchHisModel.setPlaceId(Strings.nullToEmpty(elem.getString("place_id")));
             list.add(mapSearchHisModel);
         }
@@ -62,5 +67,44 @@ public class MapSearchHisDao {
         DeleteResult results =  collection.deleteMany(query);
 
         LoggerUtil.logBiz("delete search history count ", results.getDeletedCount());
+    }
+
+    public boolean findOne(String cityId, String userId, String type, String poiId) {
+        boolean res = false;
+        BasicDBObject query = new BasicDBObject();
+        query.put("user_id", userId);
+        query.put("city_id", new ObjectId(cityId));
+        query.put("is_poi", true);
+        query.put("type", type);
+        query.put("poi_id", poiId);
+
+        FindIterable<Document> iterable = collection.find(query);
+        for(Document elem : iterable) {
+            res = true;
+            elem.put("last_modify_time", new Date());
+            collection.updateMany(query, elem);
+        }
+        return res;
+    }
+
+    public boolean findOne(String cityId, String userId, String placeId) {
+        boolean res = false;
+        BasicDBObject query = new BasicDBObject();
+        query.put("user_id", userId);
+        query.put("city_id", new ObjectId(cityId));
+        query.put("is_poi", false);
+        query.put("placeId", placeId);
+
+        FindIterable<Document> iterable = collection.find(query);
+        for(Document elem : iterable) {
+            res = true;
+            elem.put("last_modify_time", new Date());
+            collection.updateMany(query, elem);
+        }
+        return res;
+    }
+
+    public void saveSearchHis(Document elem) {
+        collection.insertOne(elem);
     }
 }

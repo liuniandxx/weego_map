@@ -8,6 +8,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import me.weego.model.AttractionModel;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
@@ -39,16 +40,30 @@ public class AttractionDao {
         final List<AttractionModel> list = Lists.newArrayList();
         FindIterable<Document> iterator = collection.find(query);
         for(Document elem : iterator) {
-            AttractionModel attractionModel = new AttractionModel();
-            attractionModel.setId(elem.getObjectId("_id"));
-            attractionModel.setAttractions(Strings.nullToEmpty(elem.getString("attractions")));
-            attractionModel.setAttractionsEn(Strings.nullToEmpty(elem.getString("attractions_en")));
-            attractionModel.setAddress(Strings.nullToEmpty(elem.getString("address")));
-            attractionModel.setLatitude(Strings.nullToEmpty(elem.getString("latitude")));
-            attractionModel.setLongitude(Strings.nullToEmpty(elem.getString("longitude")));
-            attractionModel.setPlaceId(Strings.nullToEmpty(elem.getString("place_id")));
-            list.add(attractionModel);
+            list.add(convertToAttraction(elem));
         }
         return list;
+    }
+
+    public AttractionModel findById(String id) {
+        BasicDBObject query = new BasicDBObject();
+        query.put("_id", new ObjectId(id));
+        FindIterable<Document> iterable = collection.find(query);
+        for(Document elem : iterable) {
+            return convertToAttraction(elem);
+        }
+        return null;
+    }
+
+    private AttractionModel convertToAttraction(Document elem) {
+        AttractionModel attractionModel = new AttractionModel();
+        attractionModel.setId(elem.getObjectId("_id"));
+        attractionModel.setAttractions(Strings.nullToEmpty(elem.getString("attractions")));
+        attractionModel.setAttractionsEn(Strings.nullToEmpty(elem.getString("attractions_en")));
+        attractionModel.setAddress(Strings.nullToEmpty(elem.getString("address")));
+        attractionModel.setLatitude(Strings.nullToEmpty(elem.getString("latitude")));
+        attractionModel.setLongitude(Strings.nullToEmpty(elem.getString("longitude")));
+        attractionModel.setPlaceId(Strings.nullToEmpty(elem.getString("place_id")));
+        return attractionModel;
     }
 }

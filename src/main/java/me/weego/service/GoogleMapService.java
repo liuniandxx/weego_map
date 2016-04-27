@@ -1,6 +1,9 @@
 package me.weego.service;
 
 import com.alibaba.fastjson.JSONObject;
+import me.weego.model.PlacePredictModel;
+
+import java.util.List;
 
 /**
  * Created by liuniandxx on 16-4-23.
@@ -12,6 +15,7 @@ public interface GoogleMapService {
 
     JSONObject getPlaceDetails(String location, String address);
 
-    String getPlaceComplete(String name);
+    String getPlaceComplete(String name, String location);
 
+    List<PlacePredictModel> getPlacePredict(String name, String location);
 }

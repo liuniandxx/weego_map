@@ -1,14 +1,19 @@
 package me.weego.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Lists;
 import me.weego.constant.SpiderKeyEnum;
-import me.weego.service.BaseService;
-import me.weego.service.GoogleMapService;
+import me.weego.model.*;
+import me.weego.service.*;
+import me.weego.util.DistanceUtil;
 import me.weego.util.LoggerUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
+
 import javax.annotation.Resource;
+import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
 /**
@@ -18,6 +23,18 @@ import static com.google.common.base.Preconditions.checkArgument;
 public class GoogleMapServiceImpl implements GoogleMapService {
     @Resource
     private BaseService baseService;
+
+    @Resource
+    private AttractionService attractionService;
+
+    @Resource
+    private RestaurantService restaurantService;
+
+    @Resource
+    private ShoppingService shoppingService;
+
+    @Resource
+    private AreaService areaService;
 
     @Override
     public String getNearBy(String location, String name) {
@@ -60,8 +77,107 @@ public class GoogleMapServiceImpl implements GoogleMapService {
     }
 
     @Override
-    public String getPlaceComplete(String name) {
-        return null;
+    public String getPlaceComplete(String name, String location) {
+        LoggerUtil.logBiz("**** Google place autocomplete start ****", null);
+        checkArgument(StringUtils.isNotBlank(name), "param name should not be blank");
+        String placeCompleteUrl = getPlaceCompleteUrl(name, location);
+        return baseService.getHttpRequest(placeCompleteUrl);
+    }
+
+    @Override
+    public List<PlacePredictModel> getPlacePredict(String name, String location) {
+        LoggerUtil.logBiz("**** Google place predict start ****", null);
+        checkArgument(StringUtils.isNotBlank(name), "param name should not be blank");
+        LoggerUtil.logBiz("获取匹配的景点地标", null);
+        List<PlacePredictModel> list = Lists.newArrayList();
+        List<AttractionModel> attractionModels = attractionService.queryByName(name);
+        for(AttractionModel model : attractionModels) {
+            PlacePredictModel placePredictModel = new PlacePredictModel();
+            placePredictModel.setIsPoi(true);
+            placePredictModel.setPoiId(model.getId().toString());
+            placePredictModel.setType(model.getType());
+            placePredictModel.setName(model.getAttractions());
+            placePredictModel.setAddress(model.getAddress());
+
+            String dest = model.getLongitude() + "," + model.getLatitude();
+            placePredictModel.setDistance(DistanceUtil.formatDistance(location, dest));
+            placePredictModel.setPlaceId(model.getPlaceId());
+            list.add(placePredictModel);
+        }
+
+        LoggerUtil.logBiz("获取匹配的餐厅", null);
+        List<RestaurantModel> restaurantModels = restaurantService.queryByName(name);
+        for(RestaurantModel model : restaurantModels) {
+            PlacePredictModel placePredictModel = new PlacePredictModel();
+            placePredictModel.setIsPoi(true);
+            placePredictModel.setPoiId(model.getId().toString());
+            placePredictModel.setType(model.getType());
+            placePredictModel.setName(model.getName());
+            String dest = model.getLongitude() + "," + model.getLatitude();
+            placePredictModel.setDistance(DistanceUtil.formatDistance(location, dest));
+            placePredictModel.setPlaceId(model.getPlaceId());
+            list.add(placePredictModel);
+        }
+
+        LoggerUtil.logBiz("获取匹配的购物", null);
+        List<ShoppingModel> shoppingModels = shoppingService.queryByName(name);
+        for(ShoppingModel model : shoppingModels) {
+            PlacePredictModel placePredictModel = new PlacePredictModel();
+            placePredictModel.setIsPoi(true);
+            placePredictModel.setPoiId(model.getId().toString());
+            placePredictModel.setType(model.getType());
+            placePredictModel.setName(model.getName());
+            String dest = model.getLongitude() + "," + model.getLatitude();
+            placePredictModel.setDistance(DistanceUtil.formatDistance(location, dest));
+            placePredictModel.setPlaceId(model.getPlaceId());
+            list.add(placePredictModel);
+        }
+
+        LoggerUtil.logBiz("获取匹配的购物圈", null);
+        List<AreaModel> areaModels = areaService.queryByName(name);
+        for(AreaModel model : areaModels) {
+            PlacePredictModel placePredictModel = new PlacePredictModel();
+            placePredictModel.setIsPoi(true);
+            placePredictModel.setPoiId(model.getId().toString());
+            placePredictModel.setType(model.getType());
+            placePredictModel.setName(model.getAreaName());
+            String dest = model.getLongitude() + "," + model.getLatitude();
+            placePredictModel.setDistance(DistanceUtil.formatDistance(location, dest));
+            placePredictModel.setPlaceId(model.getPlaceId());
+            list.add(placePredictModel);
+        }
+
+        String googlePlaces = getPlaceComplete(name, location);
+        JSONObject placesJson = JSON.parseObject(googlePlaces);
+        if("OK".equals(placesJson.getString("status"))) {
+            JSONArray predictions = placesJson.getJSONArray("predictions");
+            if(predictions != null && predictions.size() > 0) {
+                for(int i = 0; i < predictions.size(); i++) {
+                    JSONObject prediction = predictions.getJSONObject(i);
+                    String placeId = prediction.getString("place_id");
+//                    String desc = prediction.getString("description");
+                    JSONObject placeDetail = getPlaceDetails(placeId);
+                    String desc = placeDetail.getString("name");
+                    String address = placeDetail.getString("formatted_address");
+                    JSONObject placeLocation = placeDetail.getJSONObject("geometry").getJSONObject("location");
+                    String lat = placeLocation.getString("lat");
+                    String lng = placeLocation.getString("lng");
+                    String dest = lng + "," + lat;
+
+                    PlacePredictModel placePredictModel = new PlacePredictModel();
+                    placePredictModel.setIsPoi(false);
+                    placePredictModel.setPoiId("");
+                    placePredictModel.setName(desc);
+                    placePredictModel.setAddress(address);
+                    placePredictModel.setType("");
+                    placePredictModel.setPlaceId(placeId);
+                    placePredictModel.setDistance(DistanceUtil.formatDistance(location, dest));
+                    list.add(placePredictModel);
+                }
+            }
+        }
+
+        return list;
     }
 
 
@@ -89,5 +205,18 @@ public class GoogleMapServiceImpl implements GoogleMapService {
         nearbyUrl.append(baseService.getKey(SpiderKeyEnum.GOOGLE_PLACE.getType()));
         nearbyUrl.append("&language=zh-CN");
         return nearbyUrl.toString();
+    }
+
+    private String getPlaceCompleteUrl(String input, String location) {
+        StringBuilder placeCompleteUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/autocomplete/json");
+        placeCompleteUrl.append("?input=");
+        placeCompleteUrl.append(input);
+//        placeCompleteUrl.append("&radius=50000");
+        placeCompleteUrl.append("&location=");
+        placeCompleteUrl.append(location);
+        placeCompleteUrl.append("&key=");
+        placeCompleteUrl.append(baseService.getKey(SpiderKeyEnum.GOOGLE_PLACE.getType()));
+        placeCompleteUrl.append("&language=zh-CN");
+        return placeCompleteUrl.toString();
     }
 }

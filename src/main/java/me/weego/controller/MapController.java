@@ -2,6 +2,7 @@ package me.weego.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import me.weego.model.MapSearchHisModel;
+import me.weego.model.PlacePredictModel;
 import me.weego.pojo.ResBody;
 import me.weego.service.GoogleMapService;
 import me.weego.service.MapSearchHisService;
@@ -43,6 +44,31 @@ public class MapController {
                                                              @RequestParam String cityId) {
         return ResBody.returnSuccess(mapSearchHisService.getMapSearchHis(userId, cityId));
     }
+
+    @RequestMapping(value = "place/predict", method = RequestMethod.GET)
+    public ResBody<List<PlacePredictModel>> getPlacePredict(@RequestParam String place,
+                                                            @RequestParam String location) {
+        place = EncodingTool.encodeStr(place);
+        return ResBody.returnSuccess(googleMapService.getPlacePredict(place, location));
+    }
+
+    @RequestMapping(value = "history/poi/add", method = RequestMethod.POST)
+    public void saveSearchHis(@RequestParam String userId,
+                              @RequestParam String cityId,
+                              @RequestParam String poiId,
+                              @RequestParam String type) {
+        mapSearchHisService.saveSearchHis(cityId, userId, type, poiId);
+
+    }
+
+    @RequestMapping(value = "history/google/add", method = RequestMethod.POST)
+    public void saveSearchHis(@RequestParam String userId,
+                              @RequestParam String cityId,
+                              @RequestParam String placeId) {
+        mapSearchHisService.saveSearchHis(cityId, userId, placeId);
+    }
+
+
 
     @RequestMapping(value = "search/history/del", method = RequestMethod.DELETE)
     public void deleteSearchHis(@RequestParam String userId,

@@ -8,6 +8,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import me.weego.model.AreaModel;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
@@ -39,17 +40,31 @@ public class AreaDao {
         final List<AreaModel> list = Lists.newArrayList();
         FindIterable<Document> iterable = collection.find(query);
         for(Document elem : iterable) {
-            AreaModel areaModel = new AreaModel();
-            areaModel.setId(elem.getObjectId("_id"));
-            areaModel.setAreaName(Strings.nullToEmpty(elem.getString("area_name")));
-            areaModel.setAreaEnName(Strings.nullToEmpty(elem.getString("area_enname")));
-            areaModel.setLatitude(Strings.nullToEmpty(elem.getString("latitude")));
-            areaModel.setLongitude(Strings.nullToEmpty(elem.getString("longitude")));
-            areaModel.setAddress(Strings.nullToEmpty(elem.getString("address")));
-            areaModel.setType(Strings.nullToEmpty(elem.getString("type")));
-            areaModel.setPlaceId(Strings.nullToEmpty(elem.getString("place_id")));
-            list.add(areaModel);
+            list.add(convertToArea(elem));
         }
         return list;
+    }
+
+    public AreaModel findById(String id) {
+        BasicDBObject query = new BasicDBObject();
+        query.put("_id", new ObjectId(id));
+        FindIterable<Document> iterable = collection.find(query);
+        for(Document elem : iterable) {
+            return convertToArea(elem);
+        }
+        return null;
+    }
+
+    private AreaModel convertToArea(Document elem) {
+        AreaModel areaModel = new AreaModel();
+        areaModel.setId(elem.getObjectId("_id"));
+        areaModel.setAreaName(Strings.nullToEmpty(elem.getString("area_name")));
+        areaModel.setAreaEnName(Strings.nullToEmpty(elem.getString("area_enname")));
+        areaModel.setLatitude(Strings.nullToEmpty(elem.getString("latitude")));
+        areaModel.setLongitude(Strings.nullToEmpty(elem.getString("longitude")));
+        areaModel.setAddress(Strings.nullToEmpty(elem.getString("address")));
+        areaModel.setType(Strings.nullToEmpty(elem.getString("type")));
+        areaModel.setPlaceId(Strings.nullToEmpty(elem.getString("place_id")));
+        return areaModel;
     }
 }

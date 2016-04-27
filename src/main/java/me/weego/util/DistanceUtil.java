@@ -31,6 +31,29 @@ public class DistanceUtil {
         return s;
     }
 
+
+    /**
+     *
+     * @param origin 起点 格式: 经度,纬度
+     * @param dest   终点 格式: 经度,纬度
+     * @return     两坐标间的距离
+     *
+     */
+    public static double getDistance(String origin, String dest) {
+        String[] originCoordinate = origin.split("[,，]");
+        String[] destCoordinate = dest.split("[,，]");
+        return getDistance(originCoordinate[1], originCoordinate[0], destCoordinate[1], destCoordinate[0]);
+    }
+
+    public static String formatDistance(String orgin, String dest) {
+        int distance = (int)DistanceUtil.getDistance(orgin, dest);
+        if(distance < 1000) {
+            return distance + "米";
+        } else {
+            return String.format("%.1f", (distance / 100) /10.0) + "千米";
+        }
+    }
+
     private static double getRad(double d) {
         return d * Math.PI / 180.0;
     }
