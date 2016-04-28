@@ -68,7 +68,7 @@ public class MapSearchHisModel {
     }
 
     public void setIsPoi(boolean isPoi) {
-        isPoi = isPoi;
+        this.isPoi = isPoi;
     }
 
     public String getPoiId() {

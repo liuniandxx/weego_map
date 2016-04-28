@@ -271,7 +271,7 @@ public class GoogleMapServiceImpl implements GoogleMapService {
         placePredictModel.setTag(his.getTag());
         placePredictModel.setType(his.getType());
         placePredictModel.setPlaceId(his.getPlaceId());
-        String dest = his.getLongitude() + "," + his.getLatitude();
+        String dest = his.getLatitude() + "," + his.getLongitude();
         placePredictModel.setDistance(DistanceUtil.formatDistance(location, dest));
         return placePredictModel;
     }

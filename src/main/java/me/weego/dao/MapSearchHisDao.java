@@ -3,7 +3,6 @@ package me.weego.dao;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.result.DeleteResult;
@@ -12,7 +11,6 @@ import me.weego.util.LoggerUtil;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.Date;
@@ -50,9 +48,10 @@ public class MapSearchHisDao {
             mapSearchHisModel.setUserId(elem.getString("user_id"));
             mapSearchHisModel.setCityId(elem.getObjectId("city_id"));
             mapSearchHisModel.setType(Strings.nullToEmpty(elem.getString("type")));
-//            mapSearchHisModel.setDistance(elem.getString("distance"));
             mapSearchHisModel.setLatitude(elem.getString("latitude"));
             mapSearchHisModel.setLongitude(elem.getString("longitude"));
+            mapSearchHisModel.setImage(Strings.nullToEmpty(elem.getString("image")));
+            mapSearchHisModel.setTag(Strings.nullToEmpty(elem.getString("tag")));
             mapSearchHisModel.setPlaceId(Strings.nullToEmpty(elem.getString("place_id")));
             list.add(mapSearchHisModel);
         }
@@ -81,8 +80,8 @@ public class MapSearchHisDao {
         FindIterable<Document> iterable = collection.find(query);
         for(Document elem : iterable) {
             res = true;
-//            elem.put("last_modify_time", new Date());
-            collection.updateOne(query, new Document("$set", new Document("last_modify_time", new Date())));
+            collection.updateMany(query, new Document("$set", new Document("last_modify_time", new Date())));
+            break;
         }
         return res;
     }
@@ -98,8 +97,8 @@ public class MapSearchHisDao {
         FindIterable<Document> iterable = collection.find(query);
         for(Document elem : iterable) {
             res = true;
-//            elem.put("last_modify_time", new Date());
-            collection.updateOne(query, new Document("$set", new Document("last_modify_time", new Date())));
+            collection.updateMany(query, new Document("$set", new Document("last_modify_time", new Date())));
+            break;
         }
         return res;
     }

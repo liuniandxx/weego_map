@@ -29,7 +29,7 @@ public class PlacePredictModel {
     }
 
     public void setIsPoi(boolean poi) {
-        isPoi = poi;
+        this.isPoi = poi;
     }
 
     public String getPoiId() {

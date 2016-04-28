@@ -62,7 +62,7 @@ public class MapController {
 
     }
 
-    @RequestMapping(value = "history/google/add", method = RequestMethod.POST)
+    @RequestMapping(value = "history/google/add", method = RequestMethod.GET)
     public void saveSearchHis(@RequestParam String userId,
                               @RequestParam String cityId,
                               @RequestParam String placeId) {
@@ -71,7 +71,7 @@ public class MapController {
 
 
 
-    @RequestMapping(value = "search/history/del", method = RequestMethod.DELETE)
+    @RequestMapping(value = "search/history/del", method = RequestMethod.GET)
     public void deleteSearchHis(@RequestParam String userId,
                                 @RequestParam String cityId) {
         mapSearchHisService.deleteSearchHis(userId, cityId);
