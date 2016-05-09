@@ -1,7 +1,5 @@
 package me.weego.dao;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.mongodb.BasicDBList;
@@ -67,28 +65,33 @@ public class AttractionDao {
         attractionModel.setAddress(Strings.nullToEmpty(elem.getString("address")));
         try {
             attractionModel.setLatitude(Strings.nullToEmpty(elem.getString("latitude")));
-            attractionModel.setLongitude(Strings.nullToEmpty(elem.getString("longitude")));
         } catch (Exception e) {
             LoggerUtil.logBiz("cast exception", e);
             Double lat = elem.getDouble("latitude");
-            Double lng = elem.getDouble("longitude");
             attractionModel.setLatitude(lat.toString());
+        }
+
+        try {
+            attractionModel.setLongitude(Strings.nullToEmpty(elem.getString("longitude")));
+        } catch (Exception e) {
+            LoggerUtil.logBiz("cast exception", e);
+            Double lng = elem.getDouble("longitude");
             attractionModel.setLongitude(lng.toString());
         }
+
         attractionModel.setPlaceId(Strings.nullToEmpty(elem.getString("place_id")));
         attractionModel.setCoverImage(Strings.nullToEmpty(elem.getString("coverImageName")));
         attractionModel.setType(Strings.nullToEmpty(elem.getString("type")));
-        String json = elem.toJson();
-        JSONObject jsonObject = JSONObject.parseObject(json);
-        JSONArray subLabelNew = jsonObject.getJSONArray("subLabelNew");
+
+        attractionModel.setTag("");
+        List<Document> subLabelNew = (List<Document>)elem.get("subLabelNew");
         if(subLabelNew != null && subLabelNew.size() > 0) {
-            for(int i= 0; i < subLabelNew.size(); i++) {
-                if(!Strings.isNullOrEmpty(subLabelNew.getJSONObject(i).getString("label"))) {
-                    attractionModel.setTag(subLabelNew.getJSONObject(i).getString("label"));
+            for(Document labelNew : subLabelNew) {
+                if(!Strings.isNullOrEmpty(labelNew.getString("label"))) {
+                    attractionModel.setTag(labelNew.getString("label"));
+                    break;
                 }
             }
-        } else {
-            attractionModel.setTag("");
         }
         return attractionModel;
     }

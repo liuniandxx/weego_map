@@ -26,31 +26,22 @@ public class MapController {
     @Resource
     private MapSearchHisService mapSearchHisService;
 
-    @RequestMapping(value = "place/details", method = RequestMethod.GET)
-    public ResBody<JSONObject> getPlaceDetails(@RequestParam String location,
-                                      @RequestParam String address) {
-        address = EncodingTool.encodeStr(address);
-        return ResBody.returnSuccess(googleMapService.getPlaceDetails(location, address));
-    }
-
     @RequestMapping(value = "placeId/details", method = RequestMethod.GET)
     public ResBody<JSONObject> getPlaceDetails(@RequestParam String placeId) {
-        return ResBody.returnSuccess(googleMapService.getPlaceDetails(placeId));
+        return ResBody.returnSuccess(JSONObject.parseObject(googleMapService.getPlaceDetails(placeId)));
     }
 
     @RequestMapping(value = "search/history", method = RequestMethod.GET)
     public ResBody<List<PlacePredictModel>> getSearchHistory(@RequestParam String userId,
-                                                             @RequestParam String cityId,
-                                                             @RequestParam String location) {
-        return ResBody.returnSuccess(googleMapService.getSearchHis(userId, cityId, location));
+                                                             @RequestParam String cityId) {
+        return ResBody.returnSuccess(googleMapService.getSearchHis(userId, cityId));
     }
 
     @RequestMapping(value = "place/predict", method = RequestMethod.GET)
     public ResBody<List<PlacePredictModel>> getPlacePredict(@RequestParam String place,
-                                                            @RequestParam String location,
                                                             @RequestParam String cityId) {
         place = EncodingTool.encodeStr(place);
-        return ResBody.returnSuccess(googleMapService.getPlacePredict(place, location, cityId));
+        return ResBody.returnSuccess(googleMapService.getPlacePredict(place, cityId));
     }
 
     @RequestMapping(value = "history/poi/add", method = RequestMethod.GET)
@@ -68,7 +59,6 @@ public class MapController {
                               @RequestParam String placeId) {
         mapSearchHisService.saveSearchHis(cityId, userId, placeId);
     }
-
 
 
     @RequestMapping(value = "search/history/del", method = RequestMethod.GET)

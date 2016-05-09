@@ -1,7 +1,5 @@
 package me.weego.dao;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.mongodb.BasicDBObject;
@@ -63,31 +61,35 @@ public class ShoppingDao {
         shoppingModel.setName(elem.getString("name"));
         try {
             shoppingModel.setLatitude(Strings.nullToEmpty(elem.getString("latitude")));
-            shoppingModel.setLongitude(Strings.nullToEmpty(elem.getString("longitude")));
         } catch(Exception e) {
             LoggerUtil.logBiz("cast exception", e);
             Double lat = elem.getDouble("latitude");
-            Double lng = elem.getDouble("longitude");
             shoppingModel.setLatitude(lat.toString());
+        }
+
+        try {
+            shoppingModel.setLongitude(Strings.nullToEmpty(elem.getString("longitude")));
+        } catch(Exception e) {
+            LoggerUtil.logBiz("cast exception", e);
+            Double lng = elem.getDouble("longitude");
             shoppingModel.setLongitude(lng.toString());
         }
+
         shoppingModel.setAddress(Strings.nullToEmpty(elem.getString("address")));
         shoppingModel.setType(Strings.nullToEmpty(elem.getString("type")));
         shoppingModel.setPlaceId(Strings.nullToEmpty(elem.getString("place_id")));
         shoppingModel.setCoverImage(Strings.nullToEmpty(elem.getString("cover_image")));
-        String json = elem.toJson();
-        JSONObject jsonObject = JSONObject.parseObject(json);
-        JSONArray category = jsonObject.getJSONArray("category");
+
+        shoppingModel.setTag("");
+        List<Document> category = (List<Document>)elem.get("category");
         if(category != null && category.size() > 0) {
-            for(int i= 0; i < category.size(); i++) {
-                if(!Strings.isNullOrEmpty(category.getJSONObject(i).getString("name"))) {
-                    shoppingModel.setTag(category.getJSONObject(i).getString("name"));
+            for(Document cata : category) {
+                if(!Strings.isNullOrEmpty(cata.getString("name"))) {
+                    shoppingModel.setTag(cata.getString("name"));
+                    break;
                 }
             }
-        } else {
-            shoppingModel.setTag("");
         }
-
         return shoppingModel;
     }
 }

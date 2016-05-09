@@ -179,7 +179,7 @@
     </dependencies>
 
     <build>
-        <finalName>weego_map</finalName>
+        <finalName>weegomap</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

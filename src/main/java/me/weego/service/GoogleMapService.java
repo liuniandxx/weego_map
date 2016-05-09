@@ -1,6 +1,5 @@
 package me.weego.service;
 
-import com.alibaba.fastjson.JSONObject;
 import me.weego.model.PlacePredictModel;
 
 import java.util.List;
@@ -11,13 +10,13 @@ import java.util.List;
 public interface GoogleMapService {
     String getNearBy(String location, String name);
 
-    JSONObject getPlaceDetails(String placeId);
+    String getPlaceDetails(String placeId);
 
-    JSONObject getPlaceDetails(String location, String address);
+    String getPlaceDetails(String location, String address);
 
     String getPlaceComplete(String name, String location);
 
-    List<PlacePredictModel> getPlacePredict(String name, String location, String cityId);
+    List<PlacePredictModel> getPlacePredict(String name, String cityId);
 
-    List<PlacePredictModel> getSearchHis(String userId, String cityId, String location);
+    List<PlacePredictModel> getSearchHis(String userId, String cityId);
 }

@@ -16,7 +16,7 @@ public class MapSearchHisModel {
 
     private ObjectId cityId;
 
-    private boolean isPoi;
+    private String isPoi;
 
     private String poiId;
 
@@ -63,11 +63,11 @@ public class MapSearchHisModel {
         this.cityId = cityId;
     }
 
-    public boolean getIsPoi() {
+    public String getIsPoi() {
         return isPoi;
     }
 
-    public void setIsPoi(boolean isPoi) {
+    public void setIsPoi(String isPoi) {
         this.isPoi = isPoi;
     }
 

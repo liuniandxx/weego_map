@@ -4,16 +4,19 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import me.weego.constant.SpiderKeyEnum;
 import me.weego.model.*;
 import me.weego.service.*;
 import me.weego.util.DistanceUtil;
 import me.weego.util.LoggerUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkArgument;
 /**
@@ -39,6 +42,9 @@ public class GoogleMapServiceImpl implements GoogleMapService {
     @Resource
     private MapSearchHisService mapSearchHisService;
 
+    @Resource
+    private CityService cityService;
+
     @Override
     public String getNearBy(String location, String name) {
         LoggerUtil.logBiz("***** Google nearby search start *****", null);
@@ -50,16 +56,16 @@ public class GoogleMapServiceImpl implements GoogleMapService {
     }
 
     @Override
-    public JSONObject getPlaceDetails(String placeId) {
+    public String getPlaceDetails(String placeId) {
         LoggerUtil.logBiz("***** Google place details search start *****", null);
         checkArgument(StringUtils.isNotBlank(placeId), "param placeId should not blank");
         String detailsUrl = getDetailsUrl(placeId);
         LoggerUtil.logBiz("***** detailsUrl", detailsUrl);
-        return JSONObject.parseObject(baseService.getHttpRequest(detailsUrl));
+        return baseService.getHttpRequest(detailsUrl);
     }
 
     @Override
-    public JSONObject getPlaceDetails(String location, String address) {
+    public String getPlaceDetails(String location, String address) {
         LoggerUtil.logBiz("get place details by location and address", null);
         String nearBys = getNearBy(location, address);
         JSONObject nearByJson = JSONObject.parseObject(nearBys);
@@ -67,15 +73,16 @@ public class GoogleMapServiceImpl implements GoogleMapService {
         if(results != null && results.size() > 0) {
             JSONObject firstPlace = results.getJSONObject(0);
             String placeId = firstPlace.getString("place_id");
-            JSONObject placeDetails = getPlaceDetails(placeId);
+            String result = getPlaceDetails(placeId);
+            JSONObject placeDetails = JSONObject.parseObject(result);
             placeDetails.put("isGoogle", true);
             placeDetails.put("address", address);
-            return placeDetails;
+            return placeDetails.toString();
         } else {
             JSONObject placeDetails = new JSONObject();
             placeDetails.put("isGoogle", false);
             placeDetails.put("address", address);
-            return placeDetails;
+            return placeDetails.toString();
         }
     }
 
@@ -88,18 +95,22 @@ public class GoogleMapServiceImpl implements GoogleMapService {
     }
 
     @Override
-    public List<PlacePredictModel> getPlacePredict(String name, String location, String cityId) {
+    public List<PlacePredictModel> getPlacePredict(String name, String cityId) {
         LoggerUtil.logBiz("**** Google place predict start ****", null);
         LoggerUtil.logBiz("param name", name);
-        LoggerUtil.logBiz("param location", location);
         checkArgument(StringUtils.isNotBlank(name), "param name should not be blank");
+
+        CityModel cityModel = cityService.queryCity(cityId);
+        String location = cityModel.getLatitude() + "," + cityModel.getLongitude();
+
         LoggerUtil.logBiz("获取匹配的景点地标", null);
         List<PlacePredictModel> list = Lists.newArrayList();
+        Set<String> placeIds = Sets.newHashSet();
         List<AttractionModel> attractionModels = attractionService.queryByName(name, cityId);
         for(AttractionModel model : attractionModels) {
             LoggerUtil.logBiz("Attraction model", model.toString());
             PlacePredictModel placePredictModel = new PlacePredictModel();
-            placePredictModel.setIsPoi(true);
+            placePredictModel.setIsPoi("true");
             placePredictModel.setPoiId(model.getId().toString());
             placePredictModel.setType(model.getType());
             placePredictModel.setName(model.getAttractions());
@@ -109,7 +120,10 @@ public class GoogleMapServiceImpl implements GoogleMapService {
             String dest = model.getLatitude() + "," + model.getLongitude();
             placePredictModel.setDistance(DistanceUtil.formatDistance(location, dest));
             placePredictModel.setPlaceId(model.getPlaceId());
+            placePredictModel.setLatitude(model.getLatitude());
+            placePredictModel.setLongitude(model.getLongitude());
             list.add(placePredictModel);
+            placeIds.add(placePredictModel.getPlaceId());
         }
 
         LoggerUtil.logBiz("获取匹配的餐厅", null);
@@ -117,7 +131,7 @@ public class GoogleMapServiceImpl implements GoogleMapService {
         for(RestaurantModel model : restaurantModels) {
             LoggerUtil.logBiz("Restaurant model", model.toString());
             PlacePredictModel placePredictModel = new PlacePredictModel();
-            placePredictModel.setIsPoi(true);
+            placePredictModel.setIsPoi("true");
             placePredictModel.setPoiId(model.getId().toString());
             placePredictModel.setType(model.getType());
             placePredictModel.setName(model.getName());
@@ -127,14 +141,17 @@ public class GoogleMapServiceImpl implements GoogleMapService {
             String dest = model.getLatitude() + "," + model.getLongitude();
             placePredictModel.setDistance(DistanceUtil.formatDistance(location, dest));
             placePredictModel.setPlaceId(model.getPlaceId());
+            placePredictModel.setLatitude(model.getLatitude());
+            placePredictModel.setLongitude(model.getLongitude());
             list.add(placePredictModel);
+            placeIds.add(placePredictModel.getPlaceId());
         }
 
         LoggerUtil.logBiz("获取匹配的购物", null);
         List<ShoppingModel> shoppingModels = shoppingService.queryByName(name, cityId);
         for(ShoppingModel model : shoppingModels) {
             PlacePredictModel placePredictModel = new PlacePredictModel();
-            placePredictModel.setIsPoi(true);
+            placePredictModel.setIsPoi("true");
             placePredictModel.setPoiId(model.getId().toString());
             placePredictModel.setType(model.getType());
             placePredictModel.setName(model.getName());
@@ -144,7 +161,10 @@ public class GoogleMapServiceImpl implements GoogleMapService {
             String dest = model.getLatitude() + "," + model.getLongitude();
             placePredictModel.setDistance(DistanceUtil.formatDistance(location, dest));
             placePredictModel.setPlaceId(model.getPlaceId());
+            placePredictModel.setLatitude(model.getLatitude());
+            placePredictModel.setLongitude(model.getLongitude());
             list.add(placePredictModel);
+            placeIds.add(placePredictModel.getPlaceId());
         }
 
         LoggerUtil.logBiz("获取匹配的购物圈", null);
@@ -152,7 +172,7 @@ public class GoogleMapServiceImpl implements GoogleMapService {
         for(AreaModel model : areaModels) {
             LoggerUtil.logBiz("Area model", model);
             PlacePredictModel placePredictModel = new PlacePredictModel();
-            placePredictModel.setIsPoi(true);
+            placePredictModel.setIsPoi("true");
             placePredictModel.setPoiId(model.getId().toString());
             placePredictModel.setType(model.getType());
             placePredictModel.setName(model.getAreaName());
@@ -162,57 +182,51 @@ public class GoogleMapServiceImpl implements GoogleMapService {
             String dest = model.getLatitude() + "," + model.getLongitude();
             placePredictModel.setDistance(DistanceUtil.formatDistance(location, dest));
             placePredictModel.setPlaceId(model.getPlaceId());
+            placePredictModel.setLatitude(model.getLatitude());
+            placePredictModel.setLongitude(model.getLongitude());
             list.add(placePredictModel);
+            placeIds.add(placePredictModel.getPlaceId());
         }
 
-        String googlePlaces = getPlaceComplete(name, location);
-        JSONObject placesJson = JSON.parseObject(googlePlaces);
-        if("OK".equals(placesJson.getString("status"))) {
-            LoggerUtil.logBiz("google places", googlePlaces);
-            JSONArray predictions = placesJson.getJSONArray("predictions");
-            if(predictions != null && predictions.size() > 0) {
-                for(int i = 0; i < predictions.size(); i++) {
-                    JSONObject prediction = predictions.getJSONObject(i);
+        String googlePlaces = getNearBy(location, name);
+        JSONObject placeJson = JSON.parseObject(googlePlaces);
+        if("OK".equals(placeJson.getString("status"))) {
+            JSONArray results = placeJson.getJSONArray("results");
+            for(int i = 0; i < results.size();i++) {
+                JSONObject result = results.getJSONObject(i);
+                String placeId = result.getString("place_id");
 
-                    LoggerUtil.logBiz("Prediction: ", prediction.toJSONString());
+                String posName = result.getString("name");
+                String vicinity = result.getString("vicinity");
+                JSONObject pos = result.getJSONObject("geometry").getJSONObject("location");
+                String lat = pos.getDouble("lat").toString();
+                String lng = pos.getDouble("lng").toString();
+                String dest = lat + "," + lng;
 
-                    String placeId = prediction.getString("place_id");
-//                    String desc = prediction.getString("description");
-                    JSONObject placeDetail = getPlaceDetails(placeId);
-
-                    if(!"OK".equals(placeDetail.getString("status"))) {
-                        continue;
-                    }
-                    LoggerUtil.logBiz("place detail", placeDetail.toJSONString());
-
-                    JSONObject result = placeDetail.getJSONObject("result");
-                    String desc = result.getString("name");
-                    String address = result.getString("formatted_address");
-                    JSONObject placeLocation = result.getJSONObject("geometry").getJSONObject("location");
-                    String lat = placeLocation.getString("lat");
-                    String lng = placeLocation.getString("lng");
-                    String dest = lat + "," + lng;
-
-                    PlacePredictModel placePredictModel = new PlacePredictModel();
-                    placePredictModel.setIsPoi(false);
-                    placePredictModel.setPoiId("");
-                    placePredictModel.setName(desc);
-                    placePredictModel.setAddress(address);
-                    placePredictModel.setType("");
-                    placePredictModel.setPlaceId(placeId);
-                    placePredictModel.setImage("");
-                    placePredictModel.setTag("");
-                    placePredictModel.setDistance(DistanceUtil.formatDistance(location, dest));
-                    list.add(placePredictModel);
-                }
+                PlacePredictModel placePredictModel = new PlacePredictModel();
+                placePredictModel.setIsPoi("false");
+                placePredictModel.setPoiId("");
+                placePredictModel.setName(posName);
+                placePredictModel.setAddress(vicinity);
+                placePredictModel.setType("");
+                placePredictModel.setPlaceId(placeId);
+                placePredictModel.setImage("");
+                placePredictModel.setTag("");
+                placePredictModel.setDistance(DistanceUtil.formatDistance(location, dest));
+                placePredictModel.setLatitude(lat);
+                placePredictModel.setLongitude(lng);
+                list.add(placePredictModel);
+                placeIds.add(placePredictModel.getPlaceId());
             }
         }
-
         return list;
     }
 
     @Override
-    public List<PlacePredictModel> getSearchHis(String userId, String cityId, String location) {
+    public List<PlacePredictModel> getSearchHis(String userId, String cityId) {
+        LoggerUtil.logBiz("*********search history***********", null);
+        CityModel cityModel = cityService.queryCity(cityId);
+        String location = cityModel.getLatitude() + "," + cityModel.getLongitude();
         List<MapSearchHisModel> hisModels = mapSearchHisService.getMapSearchHis(userId, cityId);
         List<PlacePredictModel> predictModels = Lists.newArrayList();
         for(MapSearchHisModel his : hisModels) {
@@ -240,7 +254,7 @@ public class GoogleMapServiceImpl implements GoogleMapService {
         nearbyUrl.append(location);
         nearbyUrl.append("&name=");
         nearbyUrl.append(name);
-        nearbyUrl.append("&radius=500");
+        nearbyUrl.append("&radius=50000");
         nearbyUrl.append("&distance=true");
         nearbyUrl.append("&key=");
         nearbyUrl.append(baseService.getKey(SpiderKeyEnum.GOOGLE_PLACE.getType()));
@@ -273,6 +287,8 @@ public class GoogleMapServiceImpl implements GoogleMapService {
         placePredictModel.setPlaceId(his.getPlaceId());
         String dest = his.getLatitude() + "," + his.getLongitude();
         placePredictModel.setDistance(DistanceUtil.formatDistance(location, dest));
+        placePredictModel.setLatitude(his.getLatitude());
+        placePredictModel.setLongitude(his.getLongitude());
         return placePredictModel;
     }
 }

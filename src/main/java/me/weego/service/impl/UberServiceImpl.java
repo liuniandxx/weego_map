@@ -59,7 +59,6 @@ public class UberServiceImpl implements UberService {
         uberUrl += "&end_longitude=" + endLongitude;
         uberUrl += "&seat_count=" + seatCount;
         uberUrl += "&server_token=" + baseService.getKey(SpiderKeyEnum.UBER_SERVERTOKEN.getType());
-        System.out.println(uberUrl);
         return uberUrl;
     }
 

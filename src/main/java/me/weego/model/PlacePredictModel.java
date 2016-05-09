@@ -6,7 +6,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * @author ln
  */
 public class PlacePredictModel {
-    private boolean isPoi;
+    private String isPoi;
 
     private String poiId;
 
@@ -20,15 +20,20 @@ public class PlacePredictModel {
 
     private String address;
 
+    private String latitude;
+
+    private String longitude;
+
     private String image;
 
     private String tag;
 
-    public boolean getIsPoi() {
+
+    public String getIsPoi() {
         return isPoi;
     }
 
-    public void setIsPoi(boolean poi) {
+    public void setIsPoi(String poi) {
         this.isPoi = poi;
     }
 
@@ -81,6 +86,23 @@ public class PlacePredictModel {
         this.address = address;
     }
 
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
     public String getImage() {
         return image;
     }
@@ -107,6 +129,8 @@ public class PlacePredictModel {
                     .append("distance", distance)
                     .append("name", name)
                     .append("address", address)
+                    .append("latitude", latitude)
+                    .append("longitude", longitude)
                     .append("image", image)
                     .append("tag")
                     .toString();

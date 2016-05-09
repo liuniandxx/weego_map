@@ -1,11 +1,12 @@
 package me.weego.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import me.weego.constant.SpiderKeyEnum;
 import me.weego.service.BaseService;
 import me.weego.service.SpiderService;
 import me.weego.util.LoggerUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -25,20 +26,6 @@ public class SpiderServiceImpl  implements SpiderService {
         String key= baseService.getKey("4");
         key=key.replaceAll("\\&","");
         String baiduUrl = "http://openapi.baidu.com/public/2.0/bmt/translate?client_id="+key+"&q="+text+"&from=auto&to=zh";
-//        OkHttpClient okHttpClient = new OkHttpClient();
-//        Request request = new Request.Builder()
-//                .url(baiduUrl)
-//                .build();
-//
-//        String result = "";
-//        try {
-//            Response response = okHttpClient.newCall(request).execute();
-//            if (response.isSuccessful()){
-//                result = response.body().string();
-//            }
-//        } catch (IOException e) {
-//            LoggerUtil.logError("google http error", e);
-//        }
         return baseService.getHttpRequest(baiduUrl);
     }
 
@@ -50,95 +37,76 @@ public class SpiderServiceImpl  implements SpiderService {
         checkArgument(StringUtils.isNotBlank(dest)
                 && dest.contains(","), "error param destination");
         String googleUrl = getGoogleTrafficUrl(mode, origin, dest);
-//        OkHttpClient okHttpClient = new OkHttpClient();
-//        Request request = new Request.Builder()
-//                .url(googleUrl)
-//                .build();
-//
-//        String result = "";
-//        try {
-//            Response response = okHttpClient.newCall(request).execute();
-//            if (response.isSuccessful()){
-//                result = response.body().string();
-//            }
-//        } catch (IOException e) {
-//            LoggerUtil.logError("google http error", e);
-//        }
         return baseService.getHttpRequest(googleUrl);
     }
-
 
     public String getGoogleTraffic(String origin, String dest) {
         try{
             LoggerUtil.logBiz("beginnig fetch traffic **************",null);
-            String bus=getGoogleTraffic("transit", origin, dest);
-            String driving=getGoogleTraffic("driving", origin, dest);
+            String bus = getGoogleTraffic("transit", origin, dest);
+            String driving= getGoogleTraffic("driving", origin, dest);
+            String walking = getGoogleTraffic("walking", origin, dest);
             LoggerUtil.logBiz("bus traffic **************",bus);
-            LoggerUtil.logBiz("driving traffic **************",driving);
+            LoggerUtil.logBiz("driving traffic **************", driving);
+            LoggerUtil.logBiz("walking traffic **************", walking);
             if("".equals(bus) || "".equals(driving)){
                 return "";
             }
-            JSONObject backObj=new JSONObject(); //
-            JSONObject busJson=new JSONObject(bus);     //
-            String busStatus=busJson.getString("status");
-            JSONObject busBackJson=new JSONObject();        //
-            if("OK".equals(busStatus)){
-                busJson=(JSONObject)busJson.getJSONArray("routes").get(0);
-                busJson=(JSONObject) busJson.getJSONArray("legs").get(0);
-                System.out.println(busJson.toString());
-                busBackJson.put("steps",busJson.getJSONArray("steps"));
-                busBackJson.put("duration",busJson.getJSONObject("duration").get("value"));
-                busBackJson.put("distance",busJson.getJSONObject("distance").get("value"));
-            }
-            else if("ZERO_RESULTS".equals(busStatus)){
-                busBackJson.put("steps","{html: 'Zero results errors'}");
-                busBackJson.put("duration","0");
-                busBackJson.put("distance","0");
-            }else{
-                busBackJson.put("steps","{html: 'Google Not Found'}");
-                busBackJson.put("duration","0");
-                busBackJson.put("distance","0");
-            }
+            JSONObject backObj = new JSONObject(); //
+
+            JSONObject busBackJson = parseRoutes(bus);        //
             backObj.put("bus",busBackJson);
-            JSONObject drivingJson=new JSONObject(driving);     //
-            String drivingStatus=drivingJson.getString("status");
-            JSONObject drivingBackJson=new JSONObject();        //
-            if("OK".equals(drivingStatus)){
-                drivingJson=(JSONObject)drivingJson.getJSONArray("routes").get(0);
-                drivingJson=(JSONObject) drivingJson.getJSONArray("legs").get(0);
-                drivingBackJson.put("steps", drivingJson.getJSONArray("steps"));
-                drivingBackJson.put("duration", drivingJson.getJSONObject("duration").get("value"));
-                drivingBackJson.put("distance", drivingJson.getJSONObject("distance").get("value"));
-            }
-            else if("ZERO_RESULTS".equals(drivingStatus)){
-                drivingBackJson.put("steps", "{html: 'Zero results errors'}");
-                drivingBackJson.put("duration", "0");
-                drivingBackJson.put("distance", "0");
-            }else{
-                drivingBackJson.put("steps", "{html: 'Google Not Found'}");
-                drivingBackJson.put("duration", "0");
-                drivingBackJson.put("distance", "0");
-            }
+
+            JSONObject drivingBackJson = parseRoutes(driving);
             backObj.put("driver",drivingBackJson);
-            System.out.println(backObj.toString());
+
+            JSONObject walkBackJson = parseRoutes(walking);
+            backObj.put("walk", walkBackJson);
             return backObj.toString();
         }catch (Exception e){
             return "";
         }
     }
 
+    private JSONObject parseRoutes(String result) {
+        JSONObject resultJson = JSONObject.parseObject(result);     //
+        String status = resultJson.getString("status");
+        JSONObject backJson = new JSONObject();        //
+        if("OK".equals(status)){
+            JSONArray routesJson = resultJson.getJSONArray("routes");
+            for(int i = 0; i < routesJson.size(); i++) {
+                JSONObject routeJson = routesJson.getJSONObject(i);
+                JSONObject legsJson = (JSONObject) routeJson.getJSONArray("legs").get(0);
+                backJson.put("routes", routesJson);
+                backJson.put("duration", legsJson.getJSONObject("duration").get("value"));
+                backJson.put("distance", legsJson.getJSONObject("distance").get("value"));
+            }
+            backJson.put("status", "OK");
+        }
+        else if("ZERO_RESULTS".equals(status)){
+            backJson.put("routes","{html: 'Zero results errors'}");
+            backJson.put("duration","0");
+            backJson.put("distance","0");
+            backJson.put("status", "ZERO_RESULTS");
+        }else{
+            backJson.put("routes","{html: 'Google Not Found'}");
+            backJson.put("duration","0");
+            backJson.put("distance","0");
+            backJson.put("status", "NO_FOUND");
+        }
+        return backJson;
+    }
+
+
     private String getGoogleTrafficUrl(String mode, String origin, String dest) {
         String googleUrl = "https://maps.googleapis.com/maps/api/directions/json";
         googleUrl += "?origin=" + origin;
         googleUrl += "&destination=" + dest;
         googleUrl += "&mode=" + mode;
-        // var departure_time = Math.round(new Date().getTime()/1000);
-     //   googleUrl += "&departure_time=" + 1415878654;//departure_time;
         googleUrl += "&sensor=false";
+        googleUrl += "&alternatives=true";
         googleUrl += "&key=" + baseService.getKey(SpiderKeyEnum.GOOGLE_ONLINE.getType());
         googleUrl += "&language=zh-CN";
-        System.out.println(googleUrl);
-
         return googleUrl;
     }
 }

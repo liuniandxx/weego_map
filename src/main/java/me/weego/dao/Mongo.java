@@ -42,5 +42,4 @@ public class Mongo {
     public void setDB(String DB) {
         this.DB = DB;
     }
-
 }

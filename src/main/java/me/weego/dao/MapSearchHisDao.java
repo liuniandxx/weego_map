@@ -11,6 +11,7 @@ import me.weego.util.LoggerUtil;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.Date;
@@ -43,7 +44,7 @@ public class MapSearchHisDao {
             mapSearchHisModel.setId(elem.getObjectId("_id"));
             mapSearchHisModel.setName(elem.getString("name"));
             mapSearchHisModel.setAddress(Strings.nullToEmpty(elem.getString("address")));
-            mapSearchHisModel.setIsPoi(elem.getBoolean("is_poi"));
+            mapSearchHisModel.setIsPoi(elem.getString("is_poi"));
             mapSearchHisModel.setPoiId(elem.getString("poi_id"));
             mapSearchHisModel.setUserId(elem.getString("user_id"));
             mapSearchHisModel.setCityId(elem.getObjectId("city_id"));

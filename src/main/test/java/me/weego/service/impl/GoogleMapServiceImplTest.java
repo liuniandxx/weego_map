@@ -19,7 +19,7 @@ public class GoogleMapServiceImplTest {
 
     @Test
     public void testGetNearbyUrl() {
-        System.out.println(googleMapService.getNearBy("39.994952,116.476355", "望京SOHO"));
+        System.out.println(googleMapService.getNearBy("40.761433,-73.977622", "纽约现代艺术博物馆"));
     }
 
     @Test

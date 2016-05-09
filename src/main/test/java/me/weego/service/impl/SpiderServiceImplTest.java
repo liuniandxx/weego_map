@@ -25,7 +25,7 @@ public class SpiderServiceImplTest {
 
     @Test
     public void testGetGoogleTraffic() throws Exception {
-        System.out.println(spiderService.getGoogleTraffic("driving", "48.866202,2.310822", "48.857092,2.352226"));
+        System.out.println(spiderService.getGoogleTraffic("48.866202,2.310822", "48.857092,2.352226"));
     }
 
     @Test

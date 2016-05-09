@@ -20,7 +20,7 @@ import static com.google.common.base.Preconditions.checkArgument;
  * @author tcl
  */
 @RestController
-@RequestMapping("/spider")
+@RequestMapping("/spider/v1")
 public class SpiderController extends BaseController {
     @Resource
     SpiderService spiderService;
@@ -49,7 +49,6 @@ public class SpiderController extends BaseController {
     @RequestMapping(value = "google/traffic1", method = RequestMethod.GET)
     public ResBody<JSONObject> getGoogleTraffic1(@RequestParam String origin,
                                     @RequestParam(value = "destination") String dest ){
-            System.out.println("enter");
             return ResBody.returnSuccess(JSONObject.parseObject(spiderService.getGoogleTraffic(origin,dest)));
 
     }
@@ -63,7 +62,6 @@ public class SpiderController extends BaseController {
             e.printStackTrace();
             return "fail";
         }
-        System.out.println(text);
         String result=spiderService.translate(text);
         JSONObject res= JSONObject.parseObject(result);
         res.put("source","百度");
