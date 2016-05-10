@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="war" name="newgo:war">
-    <output-path>$PROJECT_DIR$/target</output-path>
-    <root id="archive" name="newgo.war">
-      <element id="artifact" artifact-name="newgo:war exploded" />
-    </root>
-  </artifact>
-</component>

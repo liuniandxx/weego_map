@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="war" name="weego_map:war">
-    <output-path>$PROJECT_DIR$/target</output-path>
-    <root id="archive" name="weego_map.war">
-      <element id="artifact" artifact-name="weego_map:war exploded" />
-    </root>
-  </artifact>
-</component>

@@ -1,0 +1,9 @@
+#maven
+target/
+*.ser
+
+#idea
+.idea/
+
+#logs
+catalina.base_IS_UNDEFINED/
