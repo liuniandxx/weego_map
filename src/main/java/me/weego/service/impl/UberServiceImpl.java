@@ -63,6 +63,6 @@ public class UberServiceImpl implements UberService {
     }
 
     private boolean numericalValidation(String value) {
-        return value.matches("^[0-9]+(\\.[0-9]+)?$");
+        return value.matches("^[+-]?[0-9]+(\\.[0-9]+)?$");
     }
 }

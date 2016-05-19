@@ -13,7 +13,7 @@ import javax.annotation.Resource;
  * @author ln
  */
 @RestController
-@RequestMapping("/uber")
+@RequestMapping("/uber/v1")
 public class UberController {
     @Resource
     private UberService uberService;
