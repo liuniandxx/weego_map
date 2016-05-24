@@ -39,6 +39,7 @@ public class AreaDao {
         values.add(new BasicDBObject("area_name", pattern));
         query.put("$or", values);
         query.put("city_id", new ObjectId(cityId));
+        query.put("show_flag", 1);
         final List<AreaModel> list = Lists.newArrayList();
         FindIterable<Document> iterable = collection.find(query);
         for(Document elem : iterable) {

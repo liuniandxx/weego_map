@@ -44,7 +44,7 @@ public class UberServiceImpl implements UberService {
 
         String uberUrl = getUberEstimatePriceUrl(startLatitude, startLongitude, endLatitude, endLongitude, seatCount);
         LoggerUtil.logBiz("request uber url", uberUrl);
-        LoggerUtil.logBiz("beginnig fetch estimates price **************",null);
+        LoggerUtil.logBiz("begin fetch estimates price **************",null);
         String result = baseService.getHttpRequest(uberUrl);
         LoggerUtil.logBiz("ending fetch estimates price **************",null);
         LoggerUtil.logBiz("estimates price result", result);

@@ -35,6 +35,7 @@ public class ShoppingDao {
         BasicDBObject query = new BasicDBObject();
         query.put("name", pattern);
         query.put("city_id", new ObjectId(cityId));
+        query.put("show_flag", true);
         BasicDBObject sort = new BasicDBObject();
         sort.put("name", 1);
         final List<ShoppingModel> list = Lists.newArrayList();

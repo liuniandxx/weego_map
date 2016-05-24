@@ -6,7 +6,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * @author ln
  */
 public class PlacePredictModel {
-    private String isPoi;
+    private boolean isPoi;
 
     private String poiId;
 
@@ -29,11 +29,11 @@ public class PlacePredictModel {
     private String tag;
 
 
-    public String getIsPoi() {
+    public boolean getIsPoi() {
         return isPoi;
     }
 
-    public void setIsPoi(String poi) {
+    public void setIsPoi(boolean poi) {
         this.isPoi = poi;
     }
 

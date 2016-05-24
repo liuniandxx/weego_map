@@ -39,6 +39,7 @@ public class AttractionDao {
         values.add(new BasicDBObject("attractions_en", pattern));
         query.put("$or", values);
         query.put("city_id", new ObjectId(cityId));
+        query.put("show_flag", 1);
         final List<AttractionModel> list = Lists.newArrayList();
         FindIterable<Document> iterator = collection.find(query);
         for(Document elem : iterator) {

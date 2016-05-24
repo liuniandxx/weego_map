@@ -16,7 +16,7 @@ public class MapSearchHisModel {
 
     private ObjectId cityId;
 
-    private String isPoi;
+    private boolean isPoi;
 
     private String poiId;
 
@@ -63,11 +63,11 @@ public class MapSearchHisModel {
         this.cityId = cityId;
     }
 
-    public String getIsPoi() {
+    public boolean getIsPoi() {
         return isPoi;
     }
 
-    public void setIsPoi(String isPoi) {
+    public void setIsPoi(boolean isPoi) {
         this.isPoi = isPoi;
     }
 
@@ -165,7 +165,6 @@ public class MapSearchHisModel {
                     .append("latitude", latitude)
                     .append("longitude", longitude)
                     .append("lastModifyTime", lastModifyTime)
-//                    .append("lastMon")
                     .toString();
     }
 }
