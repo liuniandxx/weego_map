@@ -66,7 +66,7 @@ public class MapSearchHisServiceImpl implements MapSearchHisService {
             document.put("user_id", userId);
             document.put("type", type);
             document.put("poi_id", poiId);
-            document.put("is_poi", "true");
+            document.put("is_poi", true);
 
             if("0".equals(type)) {
                 AttractionModel model = attractionDao.findById(poiId);
@@ -130,7 +130,7 @@ public class MapSearchHisServiceImpl implements MapSearchHisService {
             document.put("user_id", userId);
             document.put("type", "");
             document.put("poi_id", "");
-            document.put("is_poi", "false");
+            document.put("is_poi", false);
 
             JSONObject placeDetail = JSONObject.parseObject(googleMapService.getPlaceDetails(placeId));
             JSONObject result = placeDetail.getJSONObject("result");
