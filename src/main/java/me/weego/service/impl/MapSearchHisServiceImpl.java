@@ -95,7 +95,7 @@ public class MapSearchHisServiceImpl implements MapSearchHisService {
             } else if("2".equals(type)) {
                 ShoppingModel model = shoppingDao.findById(poiId);
                 checkArgument(model != null, "Shopping is not exist");
-                document.put("mame", model.getName());
+                document.put("name", model.getName());
                 document.put("place_id", model.getPlaceId());
                 document.put("address", model.getAddress());
                 document.put("latitude", model.getLatitude());

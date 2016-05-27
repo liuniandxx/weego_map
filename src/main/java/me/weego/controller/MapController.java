@@ -44,7 +44,7 @@ public class MapController {
         return ResBody.returnSuccess(googleMapService.getPlacePredict(place, cityId));
     }
 
-    @RequestMapping(value = "history/poi/add", method = RequestMethod.GET)
+    @RequestMapping(value = "history/poi/add", method = RequestMethod.POST)
     public void saveSearchHis(@RequestParam String userId,
                               @RequestParam String cityId,
                               @RequestParam String poiId,
@@ -53,7 +53,7 @@ public class MapController {
 
     }
 
-    @RequestMapping(value = "history/google/add", method = RequestMethod.GET)
+    @RequestMapping(value = "history/google/add", method = RequestMethod.POST)
     public void saveSearchHis(@RequestParam String userId,
                               @RequestParam String cityId,
                               @RequestParam String placeId) {
